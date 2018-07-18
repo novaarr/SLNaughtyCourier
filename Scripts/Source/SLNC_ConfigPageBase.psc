@@ -1,0 +1,17 @@
+scriptname SLNC_ConfigPageBase extends Quest hidden
+
+SLNC_System property System auto
+SLNC_ConfigMenu property Menu auto
+
+bool function IsRequested(string page)
+  return false
+endFunction
+
+function Display()
+endFunction
+
+function OnOptionHighlight(int option)
+endFunction
+
+function OnOptionSelect(int option)
+endFunction
