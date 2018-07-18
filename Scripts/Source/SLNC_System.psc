@@ -1,11 +1,18 @@
 scriptname SLNC_System extends Quest hidden
 
+; Options
+bool property SpeechcraftCheck auto
+GlobalVariable property Hardcore auto
+
+; System
 SexLabFramework property SexLab auto
 
 Actor property PlayerRef auto
 ReferenceAlias property CourierAlias auto
 
 MiscObject property Gold auto
+
+
 
 function RewardMoney()
   PlayerRef.RemoveItem(Gold, 50)
