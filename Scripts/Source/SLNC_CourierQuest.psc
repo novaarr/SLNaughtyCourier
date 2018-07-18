@@ -19,18 +19,6 @@ RegisterForSingleUpdate(5)
 EndFunction
 ;END FRAGMENT
 
-;BEGIN FRAGMENT Fragment_1
-Function Fragment_1()
-;BEGIN AUTOCAST TYPE SLNC_System
-Quest __temp = self as Quest
-SLNC_System kmyQuest = __temp as SLNC_System
-;END AUTOCAST
-;BEGIN CODE
-kmyQuest.RewardSex()
-;END CODE
-EndFunction
-;END FRAGMENT
-
 ;END FRAGMENT CODE - Do not edit anything between this and the begin comment
 event OnUpdate()
   SLNC_System System = (self as Quest) as SLNC_System
@@ -40,8 +28,5 @@ event OnUpdate()
     return
   endIf
 
-
-  SetStage(StageRewardSex)
+  System.RewardSex()
 endEvent
-
-int property StageRewardSex = 6 autoReadOnly

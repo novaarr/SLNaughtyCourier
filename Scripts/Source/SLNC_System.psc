@@ -7,20 +7,21 @@ ReferenceAlias property CourierAlias auto
 
 MiscObject property Gold auto
 
-int property StageAfterSex = 0 autoReadOnly
-
 function RewardMoney()
   PlayerRef.RemoveItem(Gold, 50)
 endFunction
 
 function RewardSex()
-  sslThreadController thread = SexLab.QuickStart(                             \
-                                  PlayerRef,                                  \
-                                  CourierAlias.GetActorReference())           \
+  Actor CourierRef = CourierAlias.GetActorReference()
+  sslThreadController thread = SexLab.QuickStart(PlayerRef, CourierRef)
 
   while thread.isLocked
-    Utility.Wait(2)
+    Utility.Wait(0.5)
   endWhile
 
-  SetStage(StageAfterSex)
+  Game.DisablePlayerControls()
+  PlayerRef.SetLookAt(CourierRef, true)
+  Game.EnablePlayerControls()
+
+  Reset()
 endFunction
