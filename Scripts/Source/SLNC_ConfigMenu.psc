@@ -11,7 +11,7 @@ event OnVersionUpdate(int version)
 endEvent
 
 event OnPageReset(string page)
-  if(PageStatus.IsRequested(page))
+  if PageStatus.IsRequested(page)
     PageStatus.Display()
   endIf
 endEvent
