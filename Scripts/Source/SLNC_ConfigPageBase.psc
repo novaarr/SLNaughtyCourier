@@ -7,6 +7,12 @@ bool function IsRequested(string page)
   return false
 endFunction
 
+function DisplayIfRequested(string page)
+  if IsRequested(page)
+    Display()
+  endIf
+endFunction
+
 function Display()
 endFunction
 
