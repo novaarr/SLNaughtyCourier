@@ -83,7 +83,3 @@ function StartSex(Actor aggressor = None) ; aggressor != None indicates rape
 
   Reset()
 endFunction
-
-float function GetPlayerSpeechcraftLevel()
-  return PlayerRef.GetActorValue("Speech")
-endFunction
