@@ -21,3 +21,9 @@ endFunction
 
 function OnOptionSelect(int option)
 endFunction
+
+function OnOptionSliderOpen(int option)
+endFunction
+
+function OnOptionSliderAccept(int option, float value)
+endFunction
