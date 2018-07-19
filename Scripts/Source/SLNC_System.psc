@@ -45,9 +45,11 @@ function StartSex(Actor aggressor = None) ; aggressor != None indicates rape
   endIf
 
   Actor CourierRef = CourierAlias.GetActorReference()
-  Actor PlayerRefTmp = PlayerRef
   Actor FollowerRef = FollowerAlias.GetActorReference()
+  Actor PlayerRefTmp = PlayerRef
+
   Actor VictimRef = None
+  Actor OtherRef = None
 
   if SexWithPlayer.GetValue() == 0.0
     PlayerRefTmp = None
@@ -62,15 +64,17 @@ function StartSex(Actor aggressor = None) ; aggressor != None indicates rape
       VictimRef = FollowerRef
     else
       VictimRef = PlayerRef
+      OtherRef = FollowerRef
     endIf
 
   elseIf aggressor == PlayerRef
     VictimRef = CourierRef
+    OtherRef = FollowerRef
   endIf
 
-  sslThreadController thread = SexLab.QuickStart( CourierRef,                 \
-                                                  PlayerRefTmp,               \
-                                                  FollowerRef,                \
+  sslThreadController thread = SexLab.QuickStart( VictimRef,                  \
+                                                  aggressor,                  \
+                                                  OtherRef,                   \
                                                   Victim = VictimRef          )
 
   while thread.isLocked

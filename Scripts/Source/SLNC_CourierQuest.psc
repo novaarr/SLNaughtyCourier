@@ -19,7 +19,7 @@ Quest __temp = self as Quest
 SLNC_System kmyQuest = __temp as SLNC_System
 ;END AUTOCAST
 ;BEGIN CODE
-RegisterForSingleUpdate(kmyQuest.StageInitiateSex)
+RegisterForSingleUpdate(5)
 ;END CODE
 EndFunction
 ;END FRAGMENT
@@ -31,7 +31,7 @@ Quest __temp = self as Quest
 SLNC_System kmyQuest = __temp as SLNC_System
 ;END AUTOCAST
 ;BEGIN CODE
-RegisterForSingleUpdate(kmyQuest.StageInitiateRapeByCourier)
+RegisterForSingleUpdate(5)
 ;END CODE
 EndFunction
 ;END FRAGMENT
@@ -43,7 +43,7 @@ Quest __temp = self as Quest
 SLNC_System kmyQuest = __temp as SLNC_System
 ;END AUTOCAST
 ;BEGIN CODE
-RegisterForSingleUpdate(kmyQuest.StageInitiateRapeByPlayer)
+RegisterForSingleUpdate(5)
 ;END CODE
 EndFunction
 ;END FRAGMENT
