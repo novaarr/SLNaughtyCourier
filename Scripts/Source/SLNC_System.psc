@@ -103,6 +103,8 @@ event OnUpdateGameTime()
     RandomAppearanceCooldownActive = true
     timeElapsed = 0
 
+    Debug.Notification("$SLNC_RANDOM_APPEARANCE_START")
+
   endIf
 endEvent
 
@@ -148,18 +150,26 @@ function StartSex(Actor aggressor = None) ; aggressor != None indicates rape
     OtherRef = FollowerRef
   endIf
 
+;  Debug.Notification("Victim: " + VictimRef.GetDisplayName())
+;  Debug.Notification("Aggressor: " + aggressor.GetDisplayName())
+;  Debug.Notification("Other: " + OtherRef.GetDisplayName())
+
   sslThreadController thread = SexLab.QuickStart( VictimRef,                  \
                                                   aggressor,                  \
                                                   OtherRef,                   \
                                                   Victim = VictimRef          )
 
-  while thread.isLocked
-    Utility.Wait(0.5)
-  endWhile
+  if thread
+    while thread.isLocked
+      Utility.Wait(0.5)
+    endWhile
 
-  Game.DisablePlayerControls()
-  PlayerRef.SetLookAt(CourierRef, true)
-  Game.EnablePlayerControls()
+    Game.DisablePlayerControls()
+    PlayerRef.SetLookAt(CourierRef, true)
+    Game.EnablePlayerControls()
+  else
+    Debug.Notification("$SLNC_SEXLAB_THREAD_FAILURE")
+  endIf
 
   Reset()
 endFunction
