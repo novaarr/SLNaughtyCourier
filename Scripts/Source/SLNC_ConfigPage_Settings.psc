@@ -1,10 +1,14 @@
 scriptname SLNC_ConfigPage_Settings extends SLNC_ConfigPageBase hidden
 
-int oidSpeechcraftCheck
+int oidRandomAppearanceChance
+int oidRandomAppearanceCooldown
+
 int oidHardcoreDialogue
 
 int oidSexWithPlayer
 int oidSexWithFollower
+
+int oidSpeechcraftCheck
 
 int oidSpeechcraftCheckRapeFail
 int oidSpeechcraftCheckRapeSuccess
@@ -30,6 +34,20 @@ function Display()
   oidHardcoreDialogue = Menu.AddToggleOption(                                 \
                             "$SLNC_SETTINGS_HARDCORE_DIALOGUE",               \
                             System.HardcoreEnabled.GetValue() as bool         )
+
+
+  Menu.AddEmptyOption()
+  Menu.AddHeaderOption("$SLNC_SETTINGS_RANDAPP")
+
+  oidRandomAppearanceChance = Menu.AddSliderOption(                           \
+                            "$SLNC_SETTINGS_RANDAPP_CHANCE",                  \
+                            System.RandomAppearanceChance,                    \
+                            "$SLNC_SETTINGS_RANDAPP_CHANCE_FORMAT"            )
+
+  oidRandomAppearanceCooldown = Menu.AddSliderOption(                         \
+                            "$SLNC_SETTINGS_RANDAPP_COOLDOWN",                \
+                            System.RandomAppearanceCooldown,                  \
+                            "$SLNC_SETTINGS_RANDAPP_COOLDOWN_FORMAT"          )
 
   Menu.AddEmptyOption()
   Menu.AddHeaderOption("$SLNC_SETTINGS_SPEECHCRAFT")
@@ -84,6 +102,26 @@ function Display()
   oidSexWithFollower = Menu.AddToggleOption(                                  \
                             "$SLNC_SETTINGS_SEX_PARTNER_FOLLOWER",            \
                             System.SexWithFollower.GetValue() as bool         )
+endFunction
+
+function OnOptionHighlight(int option)
+  if option == oidHardcoreDialogue
+    Menu.SetInfoText("$SLNC_SETTINGS_HARDCORE_DIALOGUE_HINT")
+
+  elseIf  option == oidSpeechcraftCheckRapeSuccess                            \
+  ||      option == oidSpeechcraftCheckMoneySuccess                           \
+  ||      option == oidSpeechcraftCheckSexSuccess
+    Menu.SetInfoText("$SLNC_SETTINGS_SPEECHCRAFT_CHECK_SUCCESS_HINT")
+
+  elseIf  option == oidSpeechcraftCheckRapeFail                               \
+  ||      option == oidSpeechcraftCheckMoneyFail                              \
+  ||      option == oidSpeechcraftCheckSexFail
+    Menu.SetInfoText("$SLNC_SETTINGS_SPEECHCRAFT_CHECK_FAIL_HINT")
+
+  elseIf option == oidRandomAppearanceChance
+    Menu.SetInfoText("$SLNC_SETTINGS_RANDAPP_CHANCE_HINT")
+
+  endIf
 endFunction
 
 function OnOptionSelect(int option)
@@ -152,6 +190,16 @@ function OnOptionSliderOpen(int option)
     Menu.SetSliderDialogInterval(1.0)
     Menu.SetSliderDialogRange(0.0, 100.0)
 
+  elseIf option == oidRandomAppearanceChance
+    Menu.SetSliderDialogStartValue(System.RandomAppearanceChance)
+    Menu.SetSliderDialogInterval(0.001)
+    Menu.SetSliderDialogRange(0.0, 1.0)
+
+  elseIf option == oidRandomAppearanceCooldown
+    Menu.SetSliderDialogStartValue(System.RandomAppearanceCooldown)
+    Menu.SetSliderDialogInterval(1.0)
+    Menu.SetSliderDialogRange(0.0, 240.0) ; 10 days
+
   endIf
 endFunction
 
@@ -185,6 +233,12 @@ function OnOptionSliderAccept(int option, float value)
     if value < System.SpeechcraftCheckSexFail.GetValue()
       System.SpeechcraftCheckSexFail.SetValue(value)
     endIf
+
+  elseIf option == oidRandomAppearanceChance
+    System.RandomAppearanceChance = value
+
+  elseIf option == oidRandomAppearanceCooldown
+    System.RandomAppearanceCooldown = value
 
   endIf
 endFunction
