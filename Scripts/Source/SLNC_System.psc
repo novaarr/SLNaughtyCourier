@@ -133,8 +133,6 @@ function StartSex(Actor aggressor = None) ; aggressor != None indicates rape
   Actor OtherRef = None
 
   string AnimationTags = "sex,vaginal,anal,oral"
-  int femaleCount = 0
-  int maleCount = 0
 
   if SexWithPlayer.GetValue() == 0.0
     PlayerRefTmp = None
@@ -241,9 +239,7 @@ string function GetAnimationGenderTags(Actor a1, Actor a2, Actor a3=None)
 
       if actors[pos].GetActorBase().GetSex()
         FemaleCount += 1
-        Debug.Trace("[NC] female")
       else
-        Debug.Trace("[NC] male")
         MaleCount += 1
       endIf
     endIf
