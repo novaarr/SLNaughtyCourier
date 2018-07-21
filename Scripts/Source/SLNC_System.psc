@@ -127,7 +127,14 @@ function StartSex(Actor aggressor = None) ; aggressor != None indicates rape
   Actor PlayerRefTmp = PlayerRef
 
   Actor VictimRef = None
+
+  Actor MainRef = None
+  Actor PartnerRef = None
   Actor OtherRef = None
+
+  string AnimationTags = "sex,vaginal,anal,oral"
+  int femaleCount = 0
+  int maleCount = 0
 
   if SexWithPlayer.GetValue() == 0.0
     PlayerRefTmp = None
@@ -137,27 +144,67 @@ function StartSex(Actor aggressor = None) ; aggressor != None indicates rape
     FollowerRef = None
   endIf
 
+  ; Aggressor: Courier
   if aggressor == CourierRef
     if !PlayerRefTmp
+      MainRef = FollowerRef
       VictimRef = FollowerRef
+
+      PartnerRef = CourierRef
     else
+      MainRef = PlayerRef
       VictimRef = PlayerRef
+
+      PartnerRef = CourierRef
       OtherRef = FollowerRef
     endIf
 
+  ; Aggressor: Player
   elseIf aggressor == PlayerRef
+    MainRef = CourierRef
     VictimRef = CourierRef
-    OtherRef = FollowerRef
+
+    ; ..but Player not in scene
+    if !PlayerRefTmp
+      PartnerRef = FollowerRef
+    else
+      PartnerRef = PlayerRef
+      OtherRef = FollowerRef
+    endIf
+
+  ; No Aggressor
+  else
+    if !PlayerRefTmp
+      MainRef = FollowerRef
+      PartnerRef = CourierRef
+    else
+      MainRef = PlayerRef
+      PartnerRef = CourierRef
+      OtherRef = FollowerRef
+    endIf
   endIf
 
-;  Debug.Notification("Victim: " + VictimRef.GetDisplayName())
-;  Debug.Notification("Aggressor: " + aggressor.GetDisplayName())
-;  Debug.Notification("Other: " + OtherRef.GetDisplayName())
+  if VictimRef
+    AnimationTags += ",rape,aggressive,rough"
+  else
+    AnimationTags += ",loving,love,gentle"
+  endIf
 
-  sslThreadController thread = SexLab.QuickStart( VictimRef,                  \
-                                                  aggressor,                  \
+  AnimationTags += "," + GetAnimationGenderTags(MainRef, PartnerRef, OtherRef)
+
+;  Debug.Trace("[NC] Victim:        " + VictimRef.GetDisplayName())
+;  Debug.Trace("[NC] Aggressor:     " + aggressor.GetDisplayName())
+;  Debug.Trace("[NC] --")
+;  Debug.Trace("[NC] Main:          " + MainRef.GetDisplayName())
+;  Debug.Trace("[NC] Partner:       " + PartnerRef.GetDisplayName())
+;  Debug.Trace("[NC] Other:         " + OtherRef.GetDisplayName())
+;  Debug.Trace("[NC] AnimationTags: " + AnimationTags)
+
+  sslThreadController thread = SexLab.QuickStart( MainRef,                    \
+                                                  PartnerRef,                 \
                                                   OtherRef,                   \
-                                                  Victim = VictimRef          )
+                                                  Victim = VictimRef,         \
+                                                  AnimationTags = AnimationTags)
 
   if thread
     while thread.isLocked
@@ -172,4 +219,56 @@ function StartSex(Actor aggressor = None) ; aggressor != None indicates rape
   endIf
 
   Reset()
+endFunction
+
+; Utility
+string function GetAnimationGenderTags(Actor a1, Actor a2, Actor a3=None)
+  int FemaleCount = 0
+  int MaleCount = 0
+  int ActorCount = 0
+
+  Actor[] actors = new Actor[3]
+  actors[0] = a1
+  actors[1] = a2
+  actors[2] = a3
+
+  int pos = 3
+  while pos
+    pos -= 1
+
+    if actors[pos]
+      ActorCount += 1
+
+      if actors[pos].GetActorBase().GetSex()
+        FemaleCount += 1
+        Debug.Trace("[NC] female")
+      else
+        Debug.Trace("[NC] male")
+        MaleCount += 1
+      endIf
+    endIf
+  endWhile
+
+  string GenderTagLeadingMale = ""
+  string InvertedGenderTag = ""
+
+  while MaleCount
+    MaleCount -= 1
+
+    GenderTagLeadingMale += "M"
+  endWhile
+
+  while FemaleCount
+    FemaleCount -= 1
+
+    GenderTagLeadingMale += "F"
+  endWhile
+
+  while ActorCount
+    ActorCount -= 1
+
+    InvertedGenderTag += StringUtil.GetNthChar(GenderTagLeadingMale, ActorCount)
+  endWhile
+
+  return GenderTagLeadingMale + "," + InvertedGenderTag
 endFunction
