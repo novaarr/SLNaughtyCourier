@@ -218,6 +218,7 @@ function StartSex(Actor aggressor = None) ; aggressor != None indicates rape
   endIf
 
   Reset()
+  SetStage(0)
 endFunction
 
 ; Utility
