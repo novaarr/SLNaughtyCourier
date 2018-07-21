@@ -79,11 +79,12 @@ event OnInit()
 endEvent
 
 event OnUpdateGameTime()
-  if CourierScript.IsActive()
+  UpdateTimeElapsed()
+
+  if CourierScript.IsActive() || CourierScript.pCourierContainer.GetNumItems()
+    timeElapsed = 0
     return
   endIf
-
-  UpdateTimeElapsed()
 
   ; CD passed and our item was used and CD still active: reset
   if timeElapsed >= RandomAppearanceCooldown                                  \
