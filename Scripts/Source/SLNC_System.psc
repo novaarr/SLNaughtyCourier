@@ -60,6 +60,73 @@ bool property RandomAppearanceCooldownActive auto
 float lastUpdate
 float timeElapsed
 
+; Settings
+string property SettingsFileName = "slnaughtycourier.json" autoReadOnly
+string property SettingKeyCommonAnimTagList = "animtags.common" autoReadOnly
+string property SettingKeyRapeAnimTagList = "animtags.rape" autoReadOnly
+string property SettingsKeySpeechEnabled = "speechcraft.enabled" autoReadOnly
+string property SettingsKeyHardcoreEnabled = "hardcore.enabled" autoReadOnly
+string property SettingsKeySexPlayer = "sex.player" autoReadOnly
+string property SettingsKeySexFollower = "sex.follower" autoReadOnly
+string property SettingsKeySpeechCheckSexSuccess = "speechcraft.sex.success" autoReadOnly
+string property SettingsKeySpeechCheckSexFail = "speechcraft.sex.fail" autoReadOnly
+string property SettingsKeySpeechCheckMoneySuccess = "speechcraft.money.success" autoReadOnly
+string property SettingsKeySpeechCheckMoneyFail = "speechcraft.money.fail" autoReadOnly
+string property SettingsKeySpeechCheckRapeSuccess = "speechcraft.rape.success" autoReadOnly
+string property SettingsKeySpeechCheckRapeFail = "speechcraft.rape.fail" autoReadOnly
+string property SettingsKeyRandomAppearanceChance = "random_appearance.chance" autoReadOnly
+string property SettingsKeyRandomAppearanceCd = "random_appearance.cooldown" autoReadOnly
+
+
+function SettingsImport()
+  if !JsonUtil.Load(SettingsFileName)
+    return
+  endIf
+
+  CommonAnimationTagList.Set(JsonUtil.GetStringValue(SettingsFileName, SettingKeyCommonAnimTagList))
+  RapeAnimationTagList.Set(JsonUtil.GetStringValue(SettingsFileName, SettingKeyRapeAnimTagList))
+
+  SpeechcraftCheckEnabled.SetValue(JsonUtil.GetFloatValue(SettingsFileName, SettingsKeySpeechEnabled))
+  HardcoreEnabled.SetValue(JsonUtil.GetFloatValue(SettingsFileName, SettingsKeyHardcoreEnabled))
+
+  SexWithFollower.SetValue(JsonUtil.GetFloatValue(SettingsFileName, SettingsKeySexPlayer))
+  SexWithPlayer.SetValue(JsonUtil.GetFloatValue(SettingsFileName, SettingsKeySexFollower))
+
+  SpeechcraftCheckSexSuccess.SetValue(JsonUtil.GetFloatValue(SettingsFileName, SettingsKeySpeechCheckSexSuccess))
+  SpeechcraftCheckSexFail.SetValue(JsonUtil.GetFloatValue(SettingsFileName, SettingsKeySpeechCheckSexFail))
+  SpeechcraftCheckMoneySuccess.SetValue(JsonUtil.GetFloatValue(SettingsFileName, SettingsKeySpeechCheckMoneySuccess))
+  SpeechcraftCheckMoneyFail.SetValue(JsonUtil.GetFloatValue(SettingsFileName, SettingsKeySpeechCheckMoneyFail))
+  SpeechcraftCheckRapeSuccess.SetValue(JsonUtil.GetFloatValue(SettingsFileName, SettingsKeySpeechCheckRapeSuccess))
+  SpeechcraftCheckRapeFail.SetValue(JsonUtil.GetFloatValue(SettingsFileName, SettingsKeySpeechCheckRapeFail))
+
+  RandomAppearanceChance = JsonUtil.GetFloatValue(SettingsFileName, SettingsKeyRandomAppearanceChance)
+  RandomAppearanceCooldown = JsonUtil.GetFloatValue(SettingsFileName, SettingsKeyRandomAppearanceCd)
+endFunction
+
+function SettingsExport()
+  JsonUtil.SetStringValue(SettingsFileName, SettingKeyCommonAnimTagList, CommonAnimationTagList.Get())
+  JsonUtil.SetStringValue(SettingsFileName, SettingKeyRapeAnimTagList, RapeAnimationTagList.Get())
+
+  JsonUtil.SetFloatValue(SettingsFileName, SettingsKeySpeechEnabled, SpeechcraftCheckEnabled.GetValue())
+  JsonUtil.SetFloatValue(SettingsFileName, SettingsKeyHardcoreEnabled, HardcoreEnabled.GetValue())
+
+  JsonUtil.SetFloatValue(SettingsFileName, SettingsKeySexPlayer, SexWithFollower.GetValue())
+  JsonUtil.SetFloatValue(SettingsFileName, SettingsKeySexFollower, SexWithPlayer.GetValue())
+
+  JsonUtil.SetFloatValue(SettingsFileName, SettingsKeySpeechCheckSexSuccess, SpeechcraftCheckSexSuccess.GetValue())
+  JsonUtil.SetFloatValue(SettingsFileName, SettingsKeySpeechCheckSexFail, SpeechcraftCheckSexFail.GetValue())
+  JsonUtil.SetFloatValue(SettingsFileName, SettingsKeySpeechCheckMoneySuccess, SpeechcraftCheckMoneySuccess.GetValue())
+  JsonUtil.SetFloatValue(SettingsFileName, SettingsKeySpeechCheckMoneyFail, SpeechcraftCheckMoneyFail.GetValue())
+  JsonUtil.SetFloatValue(SettingsFileName, SettingsKeySpeechCheckRapeSuccess, SpeechcraftCheckRapeSuccess.GetValue())
+  JsonUtil.SetFloatValue(SettingsFileName, SettingsKeySpeechCheckRapeFail, SpeechcraftCheckRapeFail.GetValue())
+
+  JsonUtil.SetFloatValue(SettingsFileName, SettingsKeyRandomAppearanceChance, RandomAppearanceChance)
+  JsonUtil.SetFloatValue(SettingsFileName, SettingsKeyRandomAppearanceCd, RandomAppearanceCooldown)
+
+  JsonUtil.Save(SettingsFileName)
+endFunction
+
+; System
 function UpdateTimeElapsed()
   float currentTime = Utility.GetCurrentGameTime() * 24.0
   timeElapsed += currentTime - lastUpdate

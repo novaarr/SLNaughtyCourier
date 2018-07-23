@@ -26,6 +26,60 @@ string function AssembleTags()
   return tags
 endFunction
 
+function Set(string tags)
+  TagList = Utility.ResizeStringArray(TagList, 0)
+  TagStateList = Utility.ResizeBoolArray(TagStateList, 0)
+
+  string[] tmp = StringUtil.Split(tags, ",")
+  int pos = tmp.Length
+
+  while pos
+    pos -= 1
+
+    string tagState = StringUtil.GetNthChar(tmp[pos], 0)
+    string tag = StringUtil.Substring(tmp[pos], 1)
+
+    if tagState == "+"
+      AddTag(tag, true)
+
+    elseIf tagState == "-"
+      AddTag(tag)
+
+    else
+      Debug.Trace("[SLNC] Warning: Unable to determine tag state. Incorrect state: '" + tagState + "'")
+    endIf
+  endWhile
+endFunction
+
+string function Get()
+  if !TagList
+    return ""
+  endIf
+
+  string tags = ""
+  int pos = TagList.Length
+
+  while pos
+    pos -= 1
+
+    if TagList[pos]
+      if TagStateList[pos]
+        tags += "+"
+      else
+        tags += "-"
+      endIf
+
+      tags += TagList[pos]
+
+      if pos > 0
+        tags += ","
+      endIf
+    endIf
+  endWhile
+
+  return tags
+endFunction
+
 function AddTag(string tag, bool enabled = false)
   if !TagList
     TagList = new string[1]
