@@ -4,6 +4,8 @@ int oidSettingsImport
 int oidSettingsExport
 
 function Display()
+  Menu.SetCursorFillMode(Menu.TOP_TO_BOTTOM)
+
   oidSettingsImport = Menu.AddTextOption("$SLNC_MISC_IMPORT", "")
   oidSettingsExport = Menu.AddTextOption("$SLNC_MISC_EXPORT", "")
 endFunction
