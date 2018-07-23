@@ -3,7 +3,18 @@ scriptname SLNC_ConfigPageBase extends Quest hidden
 SLNC_System property System auto
 SLNC_ConfigMenu property Menu auto
 
+string property Name auto
+bool property Default auto
+
 bool function IsRequested(string page)
+  if Default && page == ""
+    return true
+  endIf
+
+  if page == Name
+    return true
+  endIf
+
   return false
 endFunction
 
@@ -16,14 +27,20 @@ endFunction
 function Display()
 endFunction
 
-function OnOptionHighlight(int option)
+function OnHighlight(int option)
 endFunction
 
-function OnOptionSelect(int option)
+function OnSelect(int option)
 endFunction
 
-function OnOptionSliderOpen(int option)
+function OnSliderOpen(int option)
 endFunction
 
-function OnOptionSliderAccept(int option, float value)
+function OnSliderAccept(int option, float value)
+endFunction
+
+function OnInputOpen(int option)
+endFunction
+
+function OnInputAccept(int option, string value)
 endFunction

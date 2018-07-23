@@ -12,6 +12,18 @@ ReferenceAlias Property Alias_Courier Auto
 ReferenceAlias Property Alias_Player Auto
 ;END ALIAS PROPERTY
 
+;BEGIN FRAGMENT Fragment_2
+Function Fragment_2()
+;BEGIN AUTOCAST TYPE SLNC_System
+Quest __temp = self as Quest
+SLNC_System kmyQuest = __temp as SLNC_System
+;END AUTOCAST
+;BEGIN CODE
+RegisterForSingleUpdate(5)
+;END CODE
+EndFunction
+;END FRAGMENT
+
 ;BEGIN FRAGMENT Fragment_0
 Function Fragment_0()
 ;BEGIN AUTOCAST TYPE SLNC_System
@@ -26,18 +38,6 @@ EndFunction
 
 ;BEGIN FRAGMENT Fragment_3
 Function Fragment_3()
-;BEGIN AUTOCAST TYPE SLNC_System
-Quest __temp = self as Quest
-SLNC_System kmyQuest = __temp as SLNC_System
-;END AUTOCAST
-;BEGIN CODE
-RegisterForSingleUpdate(5)
-;END CODE
-EndFunction
-;END FRAGMENT
-
-;BEGIN FRAGMENT Fragment_2
-Function Fragment_2()
 ;BEGIN AUTOCAST TYPE SLNC_System
 Quest __temp = self as Quest
 SLNC_System kmyQuest = __temp as SLNC_System

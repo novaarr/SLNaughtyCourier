@@ -1,0 +1,5 @@
+scriptname SLNC_ConfigGroup_RapeAnimTagList extends SLNC_ConfigGroup_AnimTagList hidden
+
+SLNC_AnimTagList function GetTagList()
+  return Menu.System.RapeAnimationTagList
+endFunction

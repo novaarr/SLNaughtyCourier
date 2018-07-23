@@ -19,14 +19,6 @@ int oidSpeechcraftCheckMoneySuccess
 int oidSpeechcraftCheckSexFail
 int oidSpeechcraftCheckSexSuccess
 
-bool function IsRequested(string page)
-  if page == "$SLNC_PAGE_SETTINGS" || page == ""
-    return true
-  endIf
-
-  return false
-endFunction
-
 function Display()
   Menu.SetCursorFillMode(Menu.TOP_TO_BOTTOM)
   Menu.SetCursorPosition(Menu.TOP_LEFT)
@@ -104,7 +96,7 @@ function Display()
                             System.SexWithFollower.GetValue() as bool         )
 endFunction
 
-function OnOptionHighlight(int option)
+function OnHighlight(int option)
   if option == oidHardcoreDialogue
     Menu.SetInfoText("$SLNC_SETTINGS_HARDCORE_DIALOGUE_HINT")
 
@@ -124,7 +116,7 @@ function OnOptionHighlight(int option)
   endIf
 endFunction
 
-function OnOptionSelect(int option)
+function OnSelect(int option)
   if option == oidSpeechcraftCheck
     bool tmp = System.SpeechcraftCheckEnabled.GetValue() as bool
     System.SpeechcraftCheckEnabled.SetValue((!tmp) as int)
@@ -144,7 +136,7 @@ function OnOptionSelect(int option)
   endIf
 endFunction
 
-function OnOptionSliderOpen(int option)
+function OnSliderOpen(int option)
   if option == oidSpeechcraftCheckRapeFail
     float startValue = System.SpeechcraftCheckRapeFail.GetValue() as float
     float maxValue = System.SpeechcraftCheckRapeSuccess.GetValue() as float
@@ -203,7 +195,7 @@ function OnOptionSliderOpen(int option)
   endIf
 endFunction
 
-function OnOptionSliderAccept(int option, float value)
+function OnSliderAccept(int option, float value)
   if option == oidSpeechcraftCheckRapeFail
     System.SpeechcraftCheckRapeFail.SetValue(value)
 

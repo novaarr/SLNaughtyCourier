@@ -1,6 +1,9 @@
 scriptname SLNC_System extends Quest hidden
 
 ; Options
+SLNC_CommonAnimTagList property CommonAnimationTagList auto
+SLNC_RapeAnimTagList property RapeAnimationTagList auto
+
 GlobalVariable property SpeechcraftCheckEnabled auto
 GlobalVariable property HardcoreEnabled auto
 
@@ -133,7 +136,7 @@ function StartSex(Actor aggressor = None) ; aggressor != None indicates rape
   Actor PartnerRef = None
   Actor OtherRef = None
 
-  string AnimationTags = "sex,vaginal,anal,oral"
+  string AnimationTags = CommonAnimationTagList.AssembleTags()
 
   if SexWithPlayer.GetValue() == 0.0
     PlayerRefTmp = None
@@ -184,9 +187,7 @@ function StartSex(Actor aggressor = None) ; aggressor != None indicates rape
   endIf
 
   if VictimRef
-    AnimationTags += ",rape,aggressive,rough"
-  else
-    AnimationTags += ",loving,love,gentle"
+    AnimationTags += ","+ RapeAnimationTagList.AssembleTags()
   endIf
 
   AnimationTags += "," + GetAnimationGenderTags(MainRef, PartnerRef, OtherRef)
