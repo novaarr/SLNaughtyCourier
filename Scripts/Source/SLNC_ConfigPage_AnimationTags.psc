@@ -17,6 +17,10 @@ function OnSelect(int option)
   RapeTagGroup.OnSelect(option)
 endFunction
 
+function OnHighlight(int option)
+  RapeTagGroup.OnHighlight(option)
+endFunction
+
 function OnInputOpen(int option)
   CommonTagGroup.OnInputOpen(option)
   RapeTagGroup.OnInputOpen(option)

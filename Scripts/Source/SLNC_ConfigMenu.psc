@@ -10,7 +10,7 @@ int property TOP_LEFT = 0 autoReadOnly
 int property TOP_RIGHT = 1 autoReadOnly
 
 int function GetVersion()
-  return 2
+  return 3
 endFunction
 
 event OnVersionUpdate(int version)
