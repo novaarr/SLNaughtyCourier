@@ -1,5 +1,8 @@
 scriptname SLNC_ConfigGroup_AnimTagList extends SLNC_ConfigGroupBase hidden
 
+int oidDisableAll
+int oidEnableAll
+
 int[] oidTag
 int[] oidTagState
 
@@ -13,6 +16,16 @@ function DisplayExpanded()
     return
   endIf
 
+  Menu.SetCursorFillMode(MENU.LEFT_TO_RIGHT)
+
+  oidEnableAll = Menu.AddTextOption("", "$SLNC_ANIMATIONTAGS_ENABLEALL")
+  oidDisableAll = Menu.AddTextOption("", "$SLNC_ANIMATIONTAGS_DISABLEALL")
+
+  Menu.SetCursorFillMode(MENU.TOP_TO_BOTTOM)
+  Menu.AddEmptyOption()
+
+  Menu.SetCursorFillMode(MENU.LEFT_TO_RIGHT)
+
   int tagCount = TagList.GetTagCount()
 
   if !oidTag || tagCount != oidTag.Length
@@ -21,8 +34,6 @@ function DisplayExpanded()
 
     TagList.Sort()
   endIf
-
-  Menu.SetCursorFillMode(MENU.LEFT_TO_RIGHT)
 
   int pos
   while pos < tagCount
@@ -45,10 +56,26 @@ function OnSelect(int option)
     return
   endIf
 
-  int pos = oidTagState.Find(option)
+  if option == oidEnableAll || option == oidDisableAll
+    int pos = oidTagState.Length
+    bool stateRep = false
 
-  if pos != -1
-    GetTagList().ToggleTagState(pos)
+    if option == oidEnableAll
+      stateRep = true
+    endIf
+
+    while pos
+      pos -= 1
+
+      GetTagList().SetTagState(stateRep, pos)
+    endWhile
+
+  else
+    int pos = oidTagState.Find(option)
+
+    if pos != -1
+      GetTagList().ToggleTagState(pos)
+    endIf
   endIf
 endFunction
 

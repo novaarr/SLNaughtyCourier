@@ -148,6 +148,12 @@ function ToggleTagState(int pos)
   endIf
 endFunction
 
+function SetTagState(bool rep, int pos)
+  if TagStateList && TagStateList.Length > pos
+    TagStateList[pos] = rep
+  endIf
+endFunction
+
 int function GetTagCount()
   if TagList
     return TagList.Length
