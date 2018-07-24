@@ -2,7 +2,9 @@ scriptname SLNC_System extends Quest hidden
 
 ; Options
 SLNC_CommonAnimTagList property CommonAnimationTagList auto
+
 SLNC_RapeAnimTagList property RapeAnimationTagList auto
+bool property DeactivatedRapeSuppressCommon auto
 
 GlobalVariable property SpeechcraftCheckEnabled auto
 GlobalVariable property HardcoreEnabled auto
@@ -50,6 +52,7 @@ MiscObject property Gold auto
 Book property DummyItem auto
 
 ; Stages
+int property StageInitial = 0 autoReadOnly
 int property StageInitiateSex = 5 autoReadOnly
 int property StageInitiateRapeByPlayer = 6 autoReadOnly
 int property StageInitiateRapeByCourier = 7 autoReadOnly
@@ -189,6 +192,8 @@ endFunction
 
 function StartSex(Actor aggressor = None) ; aggressor != None indicates rape
   if !SexWithPlayer && !SexWithFollower
+    Debug.Notification("$SLNC_NO_SEX_TARGET")
+
     Reset()
     return
   endIf
@@ -202,8 +207,6 @@ function StartSex(Actor aggressor = None) ; aggressor != None indicates rape
   Actor MainRef = None
   Actor PartnerRef = None
   Actor OtherRef = None
-
-  string AnimationTags = CommonAnimationTagList.AssembleTags()
 
   if SexWithPlayer.GetValue() == 0.0
     PlayerRefTmp = None
@@ -253,18 +256,39 @@ function StartSex(Actor aggressor = None) ; aggressor != None indicates rape
     endIf
   endIf
 
+  string AnimationTags = ""
+
   if VictimRef
-    AnimationTags += ","+ RapeAnimationTagList.AssembleTags()
+    if DeactivatedRapeSuppressCommon
+      AnimationTags = CommonAnimationTagList.AssembleTags(RapeAnimationTagList)
+      AnimationTags += "," + RapeAnimationTagList.AssembleTags()
+    else
+      AnimationTags = CommonAnimationTagList.AssembleTags()
+      AnimationTags += "," + RapeAnimationTagList.AssembleTags()
+    endIf
+  else
+    AnimationTags = CommonAnimationTagList.AssembleTags()
   endIf
 
   AnimationTags += "," + GetAnimationGenderTags(MainRef, PartnerRef, OtherRef)
 
-;  Debug.Trace("[NC] Victim:        " + VictimRef.GetDisplayName())
-;  Debug.Trace("[NC] Aggressor:     " + aggressor.GetDisplayName())
+;  if VictimRef
+;    Debug.Trace("[NC] Victim:        " + VictimRef.GetDisplayName())
+;  endIf
+;
+;  if aggressor
+;    Debug.Trace("[NC] Aggressor:     " + aggressor.GetDisplayName())
+;  endIf
+;
 ;  Debug.Trace("[NC] --")
+;
 ;  Debug.Trace("[NC] Main:          " + MainRef.GetDisplayName())
 ;  Debug.Trace("[NC] Partner:       " + PartnerRef.GetDisplayName())
-;  Debug.Trace("[NC] Other:         " + OtherRef.GetDisplayName())
+;
+;  if OtherRef
+;    Debug.Trace("[NC] Other:         " + OtherRef.GetDisplayName())
+;  endIf
+;
 ;  Debug.Trace("[NC] AnimationTags: " + AnimationTags)
 
   sslThreadController thread = SexLab.QuickStart( MainRef,                    \
@@ -284,9 +308,6 @@ function StartSex(Actor aggressor = None) ; aggressor != None indicates rape
   else
     Debug.Notification("$SLNC_SEXLAB_THREAD_FAILURE")
   endIf
-
-  Reset()
-  SetStage(0)
 endFunction
 
 ; Utility
@@ -335,6 +356,10 @@ string function GetAnimationGenderTags(Actor a1, Actor a2, Actor a3=None)
 
     InvertedGenderTag += StringUtil.GetNthChar(GenderTagLeadingMale, ActorCount)
   endWhile
+
+  if GenderTagLeadingMale == InvertedGenderTag
+    return GenderTagLeadingMale
+  endIf
 
   return GenderTagLeadingMale + "," + InvertedGenderTag
 endFunction

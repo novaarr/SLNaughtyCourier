@@ -3,7 +3,7 @@ scriptname SLNC_AnimTagList extends Quest hidden
 string[] property TagList auto
 bool[] property TagStateList auto
 
-string function AssembleTags()
+string function AssembleTags(SLNC_AnimTagList suppress = None)
   if !TagList
     return ""
   endIf
@@ -14,11 +14,22 @@ string function AssembleTags()
   while pos
     pos -= 1
 
-    if TagStateList[pos] && TagList[pos]
-      tags += TagList[pos]
+    if TagList[pos] && TagStateList[pos]
+      int suppressTagFound = -1
 
-      if pos > 0
-        tags += ","
+      if suppress
+        suppressTagFound = suppress.HasTag(TagList[pos])
+      endif
+
+      if suppressTagFound < 0                                                 \
+      || suppress.GetTagState(suppressTagFound) == true
+      ; only deactivated tags are treated as suppressing tags
+
+        tags += TagList[pos]
+
+        if pos > 0
+          tags += ","
+        endIf
       endIf
     endIf
   endWhile
@@ -132,6 +143,14 @@ function SetTag(string rep, int pos)
 
   Trim()
   Sort()
+endFunction
+
+int function HasTag(string tag)
+  if TagList
+    return TagList.Find(tag)
+  endIf
+
+  return -1
 endFunction
 
 bool function GetTagState(int pos)
