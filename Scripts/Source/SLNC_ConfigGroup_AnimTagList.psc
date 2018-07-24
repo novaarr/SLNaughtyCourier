@@ -5,6 +5,7 @@ int[] oidTagState
 
 int oidNewTag
 
+; SLNC_ConfigGroupBase
 function DisplayExpanded()
   SLNC_AnimTagList TagList = GetTagList()
 
@@ -17,17 +18,19 @@ function DisplayExpanded()
   if !oidTag || tagCount != oidTag.Length
     oidTag = Utility.CreateIntArray(tagCount)
     oidTagState = Utility.CreateIntArray(tagCount)
+
+    TagList.Sort()
   endIf
 
   Menu.SetCursorFillMode(MENU.LEFT_TO_RIGHT)
 
   int pos
   while pos < tagCount
-    oidTag[pos] = Menu.AddInputOption("$SLNC_ANIMATIONTAGS_TAG",            \
-                                      TagList.GetTag(pos)                   )
+    oidTag[pos] = Menu.AddInputOption("$SLNC_ANIMATIONTAGS_TAG",              \
+                                      TagList.GetTag(pos)                     )
 
-    oidTagState[pos] = Menu.AddToggleOption("$SLNC_ANIMATIONTAGS_STATE",    \
-                                            TagList.GetTagState(pos)        )
+    oidTagState[pos] = Menu.AddToggleOption("$SLNC_ANIMATIONTAGS_STATE",      \
+                                            TagList.GetTagState(pos)          )
 
     pos += 1
   endWhile
@@ -77,6 +80,7 @@ function OnInputAccept(int option, string value)
   endIf
 endFunction
 
+; SLNC_ConfigGroup_AnimTagList
 SLNC_AnimTagList function GetTagList()
   return None
 endFunction

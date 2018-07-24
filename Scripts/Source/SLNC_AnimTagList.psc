@@ -86,7 +86,7 @@ function AddTag(string tag, bool enabled = false)
     TagStateList = new bool[1]
   endIf
 
-  if TagList.Find(tag) != -1
+  if tag == "" || TagList.Find(tag) != -1
     return
   endIf
 
@@ -113,6 +113,8 @@ function AddTag(string tag, bool enabled = false)
 
   TagList[pos] = tag
   TagStateList[pos] = enabled
+
+  Sort()
 endFunction
 
 string function GetTag(int pos)
@@ -129,6 +131,7 @@ function SetTag(string rep, int pos)
   endIf
 
   Trim()
+  Sort()
 endFunction
 
 bool function GetTagState(int pos)
@@ -151,6 +154,36 @@ int function GetTagCount()
   endIf
 
   return 0
+endFunction
+
+function Sort()
+  if !TagList || TagList.Length <= 1
+    return
+  endIf
+
+  int i = 0
+  int j = 0
+
+  while i < TagList.Length
+    j = i
+
+    while j < TagList.Length
+      if TagList[j] < TagList[i]
+        string tag = TagList[i]
+        bool tagState = TagStateList[i]
+
+        TagList[i] = TagList[j]
+        TagStateList[i] = TagStateList[j]
+
+        TagList[j] = tag
+        TagStateList[j] = tagState
+      endIf
+
+      j += 1
+    endWhile
+
+    i += 1
+  endWhile
 endFunction
 
 function Trim()
