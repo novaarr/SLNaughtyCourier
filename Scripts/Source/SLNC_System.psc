@@ -3,6 +3,10 @@ scriptname SLNC_System extends Quest hidden
 ; Options
 SLNC_CommonAnimTagList property CommonAnimationTagList auto
 
+SLNC_OralAnimTagList property OralAnimationTagList auto
+SLNC_AnalAnimTagList property AnalAnimationTagList auto
+SLNC_VaginalAnimTagList property VaginalAnimationTagList auto
+
 SLNC_RapeAnimTagList property RapeAnimationTagList auto
 bool property DeactivatedRapeSuppressCommon auto
 
@@ -59,6 +63,7 @@ int property StageInitiateAnalSex = 4 autoReadOnly
 int property StageInitiateVaginalSex = 5 autoReadOnly
 int property StageInitiateRapeByPlayer = 6 autoReadOnly
 int property StageInitiateRapeByCourier = 7 autoReadOnly
+int property StageWaitForCourierQuest = 10 autoReadOnly
 
 ; Random Appearances
 bool property RandomAppearanceCooldownActive auto
@@ -69,6 +74,9 @@ float timeElapsed
 ; Settings
 string property SettingsFileName = "slnaughtycourier.json" autoReadOnly
 string property SettingKeyCommonAnimTagList = "animtags.common" autoReadOnly
+string property SettingKeyOralAnimTagList = "animtags.oral" autoReadOnly
+string property SettingKeyAnalAnimTagList = "animtags.anal" autoReadOnly
+string property SettingKeyVaginalAnimTagList = "animtags.vaginal" autoReadOnly
 string property SettingKeyRapeAnimTagList = "animtags.rape" autoReadOnly
 string property SettingsKeySpeechEnabled = "speechcraft.enabled" autoReadOnly
 string property SettingsKeyHardcoreEnabled = "hardcore.enabled" autoReadOnly
@@ -90,6 +98,9 @@ function SettingsImport()
   endIf
 
   CommonAnimationTagList.Set(JsonUtil.GetStringValue(SettingsFileName, SettingKeyCommonAnimTagList))
+  OralAnimationTagList.Set(JsonUtil.GetStringValue(SettingsFileName, SettingKeyOralAnimTagList))
+  AnalAnimationTagList.Set(JsonUtil.GetStringValue(SettingsFileName, SettingKeyAnalAnimTagList))
+  VaginalAnimationTagList.Set(JsonUtil.GetStringValue(SettingsFileName, SettingKeyVaginalAnimTagList))
   RapeAnimationTagList.Set(JsonUtil.GetStringValue(SettingsFileName, SettingKeyRapeAnimTagList))
 
   SpeechcraftCheckEnabled.SetValue(JsonUtil.GetFloatValue(SettingsFileName, SettingsKeySpeechEnabled))
@@ -111,6 +122,9 @@ endFunction
 
 function SettingsExport()
   JsonUtil.SetStringValue(SettingsFileName, SettingKeyCommonAnimTagList, CommonAnimationTagList.Get())
+  JsonUtil.SetStringValue(SettingsFileName, SettingKeyOralAnimTagList, OralAnimationTagList.Get())
+  JsonUtil.SetStringValue(SettingsFileName, SettingKeyAnalAnimTagList, AnalAnimationTagList.Get())
+  JsonUtil.SetStringValue(SettingsFileName, SettingKeyVaginalAnimTagList, VaginalAnimationTagList.Get())
   JsonUtil.SetStringValue(SettingsFileName, SettingKeyRapeAnimTagList, RapeAnimationTagList.Get())
 
   JsonUtil.SetFloatValue(SettingsFileName, SettingsKeySpeechEnabled, SpeechcraftCheckEnabled.GetValue())
@@ -219,7 +233,8 @@ function StartSex(bool oral = false, bool vaginal = false, bool anal = false, Ac
     FollowerRef = None
   endIf
 
-  ; Aggressor: Courier
+  ; Determine actors
+  ; - Aggressor: Courier
   if aggressor == CourierRef
     if !PlayerRefTmp
       MainRef = FollowerRef
@@ -234,7 +249,7 @@ function StartSex(bool oral = false, bool vaginal = false, bool anal = false, Ac
       OtherRef = FollowerRef
     endIf
 
-  ; Aggressor: Player
+  ; - Aggressor: Player
   elseIf aggressor == PlayerRef
     MainRef = CourierRef
     VictimRef = CourierRef
@@ -247,7 +262,7 @@ function StartSex(bool oral = false, bool vaginal = false, bool anal = false, Ac
       OtherRef = FollowerRef
     endIf
 
-  ; No Aggressor
+  ; - No Aggressor
   else
     if !PlayerRefTmp
       MainRef = FollowerRef
@@ -259,41 +274,54 @@ function StartSex(bool oral = false, bool vaginal = false, bool anal = false, Ac
     endIf
   endIf
 
-  string AnimationTags = ""
+  ; Determine tags
+  SLNC_AnimTagList RapeSuppressTagList = None
+
+  if DeactivatedRapeSuppressCommon && VictimRef
+    RapeSuppressTagList = RapeAnimationTagList
+  endIf
+
+  string AnimationTags = CommonAnimationTagList.AssembleTags(RapeSuppressTagList)
 
   if VictimRef
-    if DeactivatedRapeSuppressCommon
-      AnimationTags = CommonAnimationTagList.AssembleTags(RapeAnimationTagList)
-      AnimationTags += "," + RapeAnimationTagList.AssembleTags()
-    else
-      AnimationTags = CommonAnimationTagList.AssembleTags()
-      AnimationTags += "," + RapeAnimationTagList.AssembleTags()
-    endIf
-  else
-    AnimationTags = CommonAnimationTagList.AssembleTags()
+    AnimationTags += "," + RapeAnimationTagList.AssembleTags()
+  endIf
+
+  if vaginal
+    AnimationTags += "," + VaginalAnimationTagList.AssembleTags(RapeSuppressTagList)
+  endIf
+
+  if oral
+    AnimationTags += "," + OralAnimationTagList.AssembleTags(RapeSuppressTagList)
+  endIf
+
+  if anal
+    AnimationTags += "," + AnalAnimationTagList.AssembleTags(RapeSuppressTagList)
   endIf
 
   AnimationTags += "," + GetAnimationGenderTags(MainRef, PartnerRef, OtherRef)
 
-;  if VictimRef
-;    Debug.Trace("[NC] Victim:        " + VictimRef.GetDisplayName())
-;  endIf
-;
-;  if aggressor
-;    Debug.Trace("[NC] Aggressor:     " + aggressor.GetDisplayName())
-;  endIf
-;
-;  Debug.Trace("[NC] --")
-;
-;  Debug.Trace("[NC] Main:          " + MainRef.GetDisplayName())
-;  Debug.Trace("[NC] Partner:       " + PartnerRef.GetDisplayName())
-;
-;  if OtherRef
-;    Debug.Trace("[NC] Other:         " + OtherRef.GetDisplayName())
-;  endIf
-;
-;  Debug.Trace("[NC] AnimationTags: " + AnimationTags)
+  if VictimRef
+    Debug.Trace("[NC] Victim:        " + VictimRef.GetDisplayName())
+  endIf
 
+  if aggressor
+    Debug.Trace("[NC] Aggressor:     " + aggressor.GetDisplayName())
+  endIf
+
+  Debug.Trace("[NC] --")
+
+  Debug.Trace("[NC] Main:          " + MainRef.GetDisplayName())
+  Debug.Trace("[NC] Partner:       " + PartnerRef.GetDisplayName())
+
+  if OtherRef
+    Debug.Trace("[NC] Other:         " + OtherRef.GetDisplayName())
+  endIf
+
+  Debug.Trace("[NC] AnimationTags: " + AnimationTags)
+
+  ; Fire!
+  ; TODO: Suppressing Tags?
   sslThreadController thread = SexLab.QuickStart( MainRef,                    \
                                                   PartnerRef,                 \
                                                   OtherRef,                   \
