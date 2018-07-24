@@ -53,7 +53,10 @@ Book property DummyItem auto
 
 ; Stages
 int property StageInitial = 0 autoReadOnly
-int property StageInitiateSex = 5 autoReadOnly
+int property StageInitiateAnySex = 2 autoReadOnly
+int property StageInitiateOralSex = 3 autoReadOnly
+int property StageInitiateAnalSex = 4 autoReadOnly
+int property StageInitiateVaginalSex = 5 autoReadOnly
 int property StageInitiateRapeByPlayer = 6 autoReadOnly
 int property StageInitiateRapeByCourier = 7 autoReadOnly
 
@@ -190,7 +193,7 @@ function GiveGold(int sum)
   endIf
 endFunction
 
-function StartSex(Actor aggressor = None) ; aggressor != None indicates rape
+function StartSex(bool oral = false, bool vaginal = false, bool anal = false, Actor aggressor = None) ; aggressor != None indicates rape
   if !SexWithPlayer && !SexWithFollower
     Debug.Notification("$SLNC_NO_SEX_TARGET")
 
