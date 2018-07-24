@@ -14,6 +14,7 @@ int function GetVersion()
 endFunction
 
 event OnVersionUpdate(int version)
+  Debug.Notification("OnVersionUpdate("+version+"). Current: " + CurrentVersion)
 endEvent
 
 event OnPageReset(string page)

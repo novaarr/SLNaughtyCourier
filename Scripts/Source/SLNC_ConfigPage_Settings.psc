@@ -23,30 +23,13 @@ function Display()
   Menu.SetCursorFillMode(Menu.TOP_TO_BOTTOM)
   Menu.SetCursorPosition(Menu.TOP_LEFT)
 
-  oidHardcoreDialogue = Menu.AddToggleOption(                                 \
-                            "$SLNC_SETTINGS_HARDCORE_DIALOGUE",               \
-                            System.HardcoreEnabled.GetValue() as bool         )
-
-
-  Menu.AddEmptyOption()
-  Menu.AddHeaderOption("$SLNC_SETTINGS_RANDAPP")
-
-  oidRandomAppearanceChance = Menu.AddSliderOption(                           \
-                            "$SLNC_SETTINGS_RANDAPP_CHANCE",                  \
-                            System.RandomAppearanceChance,                    \
-                            "$SLNC_SETTINGS_RANDAPP_CHANCE_FORMAT"            )
-
-  oidRandomAppearanceCooldown = Menu.AddSliderOption(                         \
-                            "$SLNC_SETTINGS_RANDAPP_COOLDOWN",                \
-                            System.RandomAppearanceCooldown,                  \
-                            "$SLNC_SETTINGS_RANDAPP_COOLDOWN_FORMAT"          )
-
-  Menu.AddEmptyOption()
   Menu.AddHeaderOption("$SLNC_SETTINGS_SPEECHCRAFT")
 
   oidSpeechcraftCheck = Menu.AddToggleOption(                                 \
                             "$SLNC_SETTINGS_SPEECHCRAFT_ENABLED",             \
                             System.SpeechcraftCheckEnabled.GetValue() as bool )
+
+  Menu.AddEmptyOption()
 
   oidSpeechcraftCheckSexSuccess = Menu.AddSliderOption(                       \
                             "$SLNC_SETTINGS_SPEECHCRAFT_CHECK_SEX_SUCCESS",   \
@@ -85,6 +68,12 @@ function Display()
 
   Menu.SetCursorPosition(Menu.TOP_RIGHT)
 
+  oidHardcoreDialogue = Menu.AddToggleOption(                                 \
+                            "$SLNC_SETTINGS_HARDCORE_DIALOGUE",               \
+                            System.HardcoreEnabled.GetValue() as bool         )
+
+
+  Menu.AddEmptyOption()
   Menu.AddHeaderOption("$SLNC_SETTINGS_SEX_PARTNERS")
 
   oidSexWithPlayer = Menu.AddToggleOption(                                    \
@@ -94,6 +83,19 @@ function Display()
   oidSexWithFollower = Menu.AddToggleOption(                                  \
                             "$SLNC_SETTINGS_SEX_PARTNER_FOLLOWER",            \
                             System.SexWithFollower.GetValue() as bool         )
+
+  Menu.AddEmptyOption()
+  Menu.AddHeaderOption("$SLNC_SETTINGS_RANDAPP")
+
+  oidRandomAppearanceChance = Menu.AddSliderOption(                           \
+                            "$SLNC_SETTINGS_RANDAPP_CHANCE",                  \
+                            System.RandomAppearanceChance,                    \
+                            "$SLNC_SETTINGS_RANDAPP_CHANCE_FORMAT"            )
+
+  oidRandomAppearanceCooldown = Menu.AddSliderOption(                         \
+                            "$SLNC_SETTINGS_RANDAPP_COOLDOWN",                \
+                            System.RandomAppearanceCooldown,                  \
+                            "$SLNC_SETTINGS_RANDAPP_COOLDOWN_FORMAT"          )
 endFunction
 
 function OnHighlight(int option)
