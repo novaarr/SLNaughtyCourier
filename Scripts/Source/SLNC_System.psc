@@ -52,6 +52,7 @@ Actor property PlayerRef auto
 ReferenceAlias property CourierAlias auto
 ReferenceAlias property FollowerAlias auto
 
+GlobalVariable property TemporaryCourierItemCount auto
 MiscObject property Gold auto
 Book property DummyItem auto
 
@@ -63,7 +64,7 @@ int property StageInitiateAnalSex = 4 autoReadOnly
 int property StageInitiateVaginalSex = 5 autoReadOnly
 int property StageInitiateRapeByPlayer = 6 autoReadOnly
 int property StageInitiateRapeByCourier = 7 autoReadOnly
-int property StageWaitForCourierQuest = 10 autoReadOnly
+int property StageResumeCourierQuest = 10 autoReadOnly
 
 ; Random Appearances
 bool property RandomAppearanceCooldownActive auto
@@ -198,6 +199,39 @@ event OnUpdateGameTime()
 
   endIf
 endEvent
+
+function PauseCourierQuest()
+  TemporaryCourierItemCount.SetValue(CourierScript.pWICourierItemCount.GetValue())
+  CourierScript.pWICourierItemCount.SetValue(0)
+endFunction
+
+function ResumeCourierQuest()
+  CourierScript.pWICourierItemCount.SetValue(TemporaryCourierItemCount.GetValue())
+  TemporaryCourierItemCount.SetValue(0)
+endFunction
+
+function ResumeCourierQuestOnDialogueGoodbye()
+  Utility.Wait(2)
+
+  while UI.IsMenuOpen("Dialogue Menu") && GetStage() == StageInitial
+    Utility.Wait(1)
+  endWhile
+
+  if GetStage() == StageInitial
+    SetStage(StageResumeCourierQuest)
+  endIf
+endFunction
+
+function WaitForCourierQuest()
+  ResumeCourierQuest()
+
+  while CourierScript.pWICourierItemCount.GetValue() as int
+    Utility.Wait(1)
+  endWhile
+
+  Reset()
+  SetStage(StageInitial)
+endFunction
 
 function GiveGold(int sum)
   if sum == -1

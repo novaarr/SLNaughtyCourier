@@ -1,13 +1,14 @@
 ;BEGIN FRAGMENT CODE - Do not edit anything between this and the end comment
 ;NEXT FRAGMENT INDEX 1
-Scriptname SLNC_TIF_C_RM02 Extends TopicInfo Hidden
+Scriptname SLNC_TIF_C_GR01 Extends TopicInfo Hidden
 
 ;BEGIN FRAGMENT Fragment_0
 Function Fragment_0(ObjectReference akSpeakerRef)
 Actor akSpeaker = akSpeakerRef as Actor
 ;BEGIN CODE
 SLNC_System System = (GetOwningQuest() as Quest) as SLNC_System
-System.GiveGold(50)
+System.PauseCourierQuest()
+System.ResumeCourierQuestOnDialogueGoodbye()
 ;END CODE
 EndFunction
 ;END FRAGMENT

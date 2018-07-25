@@ -28,8 +28,8 @@ RegisterForSingleUpdate(2)
 EndFunction
 ;END FRAGMENT
 
-;BEGIN FRAGMENT Fragment_4
-Function Fragment_4()
+;BEGIN FRAGMENT Fragment_5
+Function Fragment_5()
 ;BEGIN CODE
 RegisterForSingleUpdate(2)
 ;END CODE
@@ -52,18 +52,22 @@ RegisterForSingleUpdate(2)
 EndFunction
 ;END FRAGMENT
 
-;BEGIN FRAGMENT Fragment_7
-Function Fragment_7()
+;BEGIN FRAGMENT Fragment_4
+Function Fragment_4()
 ;BEGIN CODE
-RegisterForUpdate(5)
+RegisterForSingleUpdate(2)
 ;END CODE
 EndFunction
 ;END FRAGMENT
 
-;BEGIN FRAGMENT Fragment_5
-Function Fragment_5()
+;BEGIN FRAGMENT Fragment_7
+Function Fragment_7()
+;BEGIN AUTOCAST TYPE SLNC_System
+Quest __temp = self as Quest
+SLNC_System kmyQuest = __temp as SLNC_System
+;END AUTOCAST
 ;BEGIN CODE
-RegisterForSingleUpdate(2)
+kmyQuest.WaitForCourierQuest()
 ;END CODE
 EndFunction
 ;END FRAGMENT
@@ -74,22 +78,22 @@ event OnUpdate()
 
   int currentStage = GetStage()
 
-  if currentStage == System.StageWaitForCourierQuest
-    Debug.Notification("Waiting for Courier Quest to end")
+  ;if currentStage == System.StageWaitForCourierQuest
+  ;  Debug.Notification("Waiting for Courier to deliver..")
 
-    if System.CourierScript.IsActive()
-      return
-    endif
+  ;  if (System.CourierScript.pWICourierItemCount.GetValue() as int) != 0
+  ;    return
+  ;  endif
 
-    UnregisterForUpdate()
+  ;  UnregisterForUpdate()
 
-    Utility.Wait(20)
+  ;  Utility.Wait(20)
 
-    Debug.Notification("Restarting..")
+  ;  Debug.Notification("Restarting..")
 
-    Reset()
-    SetStage(System.StageInitial)
-  endIf
+  ;  Reset()
+  ;  SetStage(System.StageInitial)
+  ;endIf
 
   if currentStage == System.StageInitiateRapeByCourier
     System.StartSex(vaginal = true, anal = true,                              \
@@ -113,5 +117,5 @@ event OnUpdate()
 
   endIf
 
-  SetStage(System.StageWaitForCourierQuest)
+  SetStage(System.StageResumeCourierQuest)
 endEvent
