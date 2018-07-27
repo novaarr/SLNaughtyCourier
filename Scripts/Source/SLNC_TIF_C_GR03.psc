@@ -6,8 +6,10 @@ Scriptname SLNC_TIF_C_GR03 Extends TopicInfo Hidden
 Function Fragment_0(ObjectReference akSpeakerRef)
 Actor akSpeaker = akSpeakerRef as Actor
 ;BEGIN CODE
+; Parting Stage: 0
 SLNC_System System = (GetOwningQuest() as Quest) as SLNC_System
 System.SetStage(System.StageResumeCourierQuest)
+System.LastPartingStage.SetValue(0.0)
 ;END CODE
 EndFunction
 ;END FRAGMENT
