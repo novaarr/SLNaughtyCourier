@@ -9,16 +9,20 @@ int oidSexWithPlayer
 int oidSexWithFollower
 
 int oidSpeechcraftCheck
-
 int oidSpeechcraftCheckMoneyFail
 int oidSpeechcraftCheckMoneySuccess
-
 int oidSpeechcraftCheckSexFail
 int oidSpeechcraftCheckSexSuccess
 
 int oidForceCheck
 int oidPlayerForce
 int oidCourierForce
+
+int oidArousalInfluence
+int oidCoolThreshold
+int oidCoolMult
+int oidNeedyThreshold
+int oidNeedyMult
 
 
 function Display()
@@ -58,10 +62,7 @@ function Display()
                             "$SLNC_SETTINGS_SPEECHCRAFT_CHECK_FORMAT"         )
 
   Menu.AddEmptyOption()
-
   Menu.AddHeaderOption("$SLNC_SETTINGS_FORCE")
-
-  Menu.AddEmptyOption()
 
   oidForceCheck = Menu.AddToggleOption(                                       \
                             "$SLNC_SETTINGS_FORCE_ENABLED",                   \
@@ -75,13 +76,10 @@ function Display()
                             "$SLNC_SETTINGS_FORCE_CHECK_FORMAT",              \
                             Menu.OPTION_FLAG_DISABLED                         )
 
-  Menu.AddEmptyOption()
-
   oidCourierForce = Menu.AddSliderOption(                                     \
                             "$SLNC_SETTINGS_FORCE_COURIER",                   \
                             System.CourierForce.GetValue(),                   \
                             "$SLNC_SETTINGS_FORCE_CHECK_FORMAT"               )
-
 
   Menu.SetCursorPosition(Menu.TOP_RIGHT)
 
@@ -113,6 +111,37 @@ function Display()
                             "$SLNC_SETTINGS_RANDAPP_COOLDOWN",                \
                             System.RandomAppearanceCooldown,                  \
                             "$SLNC_SETTINGS_RANDAPP_COOLDOWN_FORMAT"          )
+
+  Menu.AddEmptyOption()
+  Menu.AddHeaderOption("$SLNC_SETTINGS_AROUSAL")
+
+  oidArousalInfluence = Menu.AddToggleOption(                                 \
+                            "$SLNC_SETTINGS_AROUSAL_ENABLED",                 \
+                            System.ArousalInfluenceEnabled                    )
+
+  Menu.AddEmptyOption()
+
+  oidCoolThreshold = Menu.AddSliderOption(                                    \
+                            "$SLNC_SETTINGS_COOL_AROUSAL_THRESHOLD",          \
+                            System.CoolArousalThreshold,                      \
+                            "$SLNC_SETTINGS_AROUSAL_THRESHOLD_FORMAT"         )
+
+  oidCoolMult = Menu.AddSliderOption(                                         \
+                            "$SLNC_SETTINGS_COOL_FORCE_MULTIPLIER",           \
+                            System.CoolForceMultiplier,                       \
+                            "$SLNC_SETTINGS_FORCE_MULTIPLIER_FORMAT"          )
+
+  Menu.AddEmptyOption()
+
+  oidNeedyThreshold = Menu.AddSliderOption(                                   \
+                            "$SLNC_SETTINGS_NEEDY_AROUSAL_THRESHOLD",         \
+                            System.NeedyArousalThreshold,                     \
+                            "$SLNC_SETTINGS_AROUSAL_THRESHOLD_FORMAT"         )
+
+  oidNeedyMult = Menu.AddSliderOption(                                        \
+                            "$SLNC_SETTINGS_NEEDY_FORCE_MULTIPLIER",          \
+                            System.NeedyForceMultiplier,                      \
+                            "$SLNC_SETTINGS_FORCE_MULTIPLIER_FORMAT"          )
 endFunction
 
 function OnHighlight(int option)
@@ -135,6 +164,9 @@ function OnHighlight(int option)
 
   elseIf option == oidForceCheck
     Menu.SetInfoText("$SLNC_SETTINGS_FORCE_HINT")
+
+  elseIf option == oidArousalInfluence
+    Menu.SetInfoText("$SLNC_SETTINGS_AROUSAL_HINT")
 
   endIf
 endFunction
@@ -159,6 +191,9 @@ function OnSelect(int option)
   elseIf option == oidForceCheck
     bool tmp = System.ForceCheckEnabled.GetValue() as bool
     System.ForceCheckEnabled.SetValue((!tmp) as int)
+
+  elseIf option == oidArousalInfluence
+    System.ArousalInfluenceEnabled = !System.ArousalInfluenceEnabled
 
   endIf
 endFunction
@@ -200,6 +235,26 @@ function OnSliderOpen(int option)
     Menu.SetSliderDialogStartValue(startValue)
     Menu.SetSliderDialogInterval(1.0)
     Menu.SetSliderDialogRange(0.0, 100.0)
+
+  elseIf option == oidCoolThreshold
+    Menu.SetSliderDialogStartValue(System.CoolArousalThreshold)
+    Menu.SetSliderDialogInterval(1.0)
+    Menu.SetSliderDialogRange(0.0, 100.0)
+
+  elseIf option == oidCoolMult
+    Menu.SetSliderDialogStartValue(System.CoolForceMultiplier)
+    Menu.SetSliderDialogInterval(0.01)
+    Menu.SetSliderDialogRange(1.0, 3.0)
+
+  elseIf option == oidNeedyThreshold
+    Menu.SetSliderDialogStartValue(System.NeedyArousalThreshold)
+    Menu.SetSliderDialogInterval(1.0)
+    Menu.SetSliderDialogRange(0.0, 100.0)
+
+  elseIf option == oidNeedyMult
+    Menu.SetSliderDialogStartValue(System.NeedyForceMultiplier)
+    Menu.SetSliderDialogInterval(0.01)
+    Menu.SetSliderDialogRange(0.3, 1.0)
 
   elseIf option == oidRandomAppearanceChance
     Menu.SetSliderDialogStartValue(System.RandomAppearanceChance)
@@ -243,6 +298,26 @@ function OnSliderAccept(int option, float value)
 
   elseIf option == oidRandomAppearanceCooldown
     System.RandomAppearanceCooldown = value
+
+  elseIf option == oidCoolThreshold
+    if value > System.NeedyArousalThreshold as float
+      value = System.NeedyArousalThreshold as float
+    endIf
+
+    System.CoolArousalThreshold = value as int
+
+  elseIf option == oidCoolMult
+    System.CoolForceMultiplier = value
+
+  elseIf option == oidNeedyThreshold
+    if value < System.CoolArousalThreshold as float
+      value = System.CoolArousalThreshold as float
+    endIf
+
+    System.NeedyArousalThreshold = value as int
+
+  elseIf option == oidNeedyMult
+    System.NeedyForceMultiplier = value
 
   endIf
 endFunction

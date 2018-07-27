@@ -23,6 +23,12 @@ GlobalVariable property SpeechcraftCheckSexFail auto
 GlobalVariable property SpeechcraftCheckMoneySuccess auto
 GlobalVariable property SpeechcraftCheckMoneyFail auto
 
+int property NeedyArousalThreshold auto
+float property NeedyForceMultiplier auto
+
+int property CoolArousalThreshold auto
+float property CoolForceMultiplier auto
+
 float _RandomAppearanceChance
 float property RandomAppearanceChance
   function Set(float value)
@@ -44,6 +50,7 @@ float property RandomAppearanceCooldown auto
 
 ; System
 SexLabFramework property SexLab auto
+slaFrameworkScr property SLAroused auto
 WICourierScript property CourierScript auto
 
 Actor property PlayerRef auto
@@ -95,6 +102,12 @@ string property SettingKeySpeechCheckMoneyFail = "speechcraft.money.fail" autoRe
 string property SettingKeyForceEnabled = "force.enabled" autoreadonly
 string property SettingKeyCourierForce = "force.courier.force" autoReadOnly
 
+string property SettingKeyArousalInfluence = "arousal.enabled" autoReadOnly
+string property SettingKeyCoolArousalThresthold = "arousal.cool.arousal.threshold" autoReadOnly
+string property SettingKeyCoolForceMultiplier = "arousal.cool.force.multiplier" autoReadOnly
+string property SettingKeyNeedyArousalThresthold = "arousal.needy.arousal.threshold" autoReadOnly
+string property SettingKeyNeedyForceMultiplier = "arousal.needy.force.multiplier" autoReadOnly
+
 string property SettingKeySexPlayer = "sex.player" autoReadOnly
 string property SettingKeySexFollower = "sex.follower" autoReadOnly
 
@@ -113,13 +126,21 @@ function SettingsImport()
   VaginalAnimationTagList.Set(JsonUtil.GetStringValue(SettingsFileName, SettingKeyVaginalAnimTagList))
   RapeAnimationTagList.Set(JsonUtil.GetStringValue(SettingsFileName, SettingKeyRapeAnimTagList))
 
-  SpeechcraftCheckEnabled.SetValue(JsonUtil.GetFloatValue(SettingsFileName, SettingKeySpeechEnabled))
-  ForceCheckEnabled.SetValue(JsonUtil.GetFloatValue(SettingsFileName, SettingKeyForceEnabled))
   HardcoreEnabled.SetValue(JsonUtil.GetFloatValue(SettingsFileName, SettingKeyHardcoreEnabled))
+
+  ForceCheckEnabled.SetValue(JsonUtil.GetFloatValue(SettingsFileName, SettingKeyForceEnabled))
+  CourierForce.SetValue(JsonUtil.GetFloatValue(SettingsFileName, SettingKeyCourierForce))
+
+  ArousalInfluenceEnabled = JsonUtil.GetIntValue(SettingsFileName, SettingKeyArousalInfluence) as bool
+  CoolArousalThreshold = JsonUtil.GetIntValue(SettingsFileName, SettingKeyCoolArousalThresthold)
+  CoolForceMultiplier = JsonUtil.GetFloatValue(SettingsFileName, SettingKeyCoolForceMultiplier)
+  NeedyArousalThreshold = JsonUtil.GetIntValue(SettingsFileName, SettingKeyNeedyArousalThresthold)
+  NeedyForceMultiplier = JsonUtil.GetFloatValue(SettingsFileName, SettingKeyNeedyForceMultiplier)
 
   SexWithFollower.SetValue(JsonUtil.GetFloatValue(SettingsFileName, SettingKeySexPlayer))
   SexWithPlayer.SetValue(JsonUtil.GetFloatValue(SettingsFileName, SettingKeySexFollower))
 
+  SpeechcraftCheckEnabled.SetValue(JsonUtil.GetFloatValue(SettingsFileName, SettingKeySpeechEnabled))
   SpeechcraftCheckSexSuccess.SetValue(JsonUtil.GetFloatValue(SettingsFileName, SettingKeySpeechCheckSexSuccess))
   SpeechcraftCheckSexFail.SetValue(JsonUtil.GetFloatValue(SettingsFileName, SettingKeySpeechCheckSexFail))
   SpeechcraftCheckMoneySuccess.SetValue(JsonUtil.GetFloatValue(SettingsFileName, SettingKeySpeechCheckMoneySuccess))
@@ -136,13 +157,21 @@ function SettingsExport()
   JsonUtil.SetStringValue(SettingsFileName, SettingKeyVaginalAnimTagList, VaginalAnimationTagList.Get())
   JsonUtil.SetStringValue(SettingsFileName, SettingKeyRapeAnimTagList, RapeAnimationTagList.Get())
 
-  JsonUtil.SetFloatValue(SettingsFileName, SettingKeySpeechEnabled, SpeechcraftCheckEnabled.GetValue())
-  JsonUtil.SetFloatValue(SettingsFileName, SettingKeyForceEnabled, ForceCheckEnabled.GetValue())
   JsonUtil.SetFloatValue(SettingsFileName, SettingKeyHardcoreEnabled, HardcoreEnabled.GetValue())
+
+  JsonUtil.SetFloatValue(SettingsFileName, SettingKeyForceEnabled, ForceCheckEnabled.GetValue())
+  JsonUtil.SetFloatValue(SettingsFileName, SettingKeyCourierForce, CourierForce.GetValue())
+
+  JsonUtil.SetIntValue(SettingsFileName, SettingKeyArousalInfluence, ArousalInfluenceEnabled as int)
+  JsonUtil.SetIntValue(SettingsFileName, SettingKeyCoolArousalThresthold, CoolArousalThreshold)
+  JsonUtil.SetFloatValue(SettingsFileName, SettingKeyCoolForceMultiplier, CoolForceMultiplier)
+  JsonUtil.SetIntValue(SettingsFileName, SettingKeyNeedyArousalThresthold, NeedyArousalThreshold)
+  JsonUtil.SetFloatValue(SettingsFileName, SettingKeyNeedyForceMultiplier, NeedyForceMultiplier)
 
   JsonUtil.SetFloatValue(SettingsFileName, SettingKeySexPlayer, SexWithFollower.GetValue())
   JsonUtil.SetFloatValue(SettingsFileName, SettingKeySexFollower, SexWithPlayer.GetValue())
 
+  JsonUtil.SetFloatValue(SettingsFileName, SettingKeySpeechEnabled, SpeechcraftCheckEnabled.GetValue())
   JsonUtil.SetFloatValue(SettingsFileName, SettingKeySpeechCheckSexSuccess, SpeechcraftCheckSexSuccess.GetValue())
   JsonUtil.SetFloatValue(SettingsFileName, SettingKeySpeechCheckSexFail, SpeechcraftCheckSexFail.GetValue())
   JsonUtil.SetFloatValue(SettingsFileName, SettingKeySpeechCheckMoneySuccess, SpeechcraftCheckMoneySuccess.GetValue())
@@ -240,10 +269,23 @@ function DeterminePlayerForce()
   float destruction = PlayerRef.GetAV("Destruction")
   float illusion = PlayerRef.GetAV("Illusion")
 
+  float forcemult = 1.0
   float mean = onehanded+twohanded+archery+conjuration+destruction+illusion
-  mean /= 6.0
+        mean /= 6.0
 
-  PlayerForce.SetValue(mean)
+  if ArousalInfluenceEnabled
+    int arousal = SLAroused.GetActorArousal(PlayerRef)
+
+    if arousal <= CoolArousalThreshold
+      forcemult = CoolForceMultiplier
+
+    elseIf arousal > NeedyArousalThreshold
+      forcemult = NeedyForceMultiplier
+
+    endIf
+  endIf
+
+  PlayerForce.SetValue(mean * forcemult)
 endFunction
 
 function GiveGold(int sum)
