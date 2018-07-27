@@ -11,19 +11,17 @@ SLNC_RapeAnimTagList property RapeAnimationTagList auto
 bool property DeactivatedRapeSuppressCommon auto
 
 GlobalVariable property SpeechcraftCheckEnabled auto
+GlobalVariable property ForceCheckEnabled auto
 GlobalVariable property HardcoreEnabled auto
+bool property ArousalInfluenceEnabled auto
 
 GlobalVariable property SexWithFollower auto
 GlobalVariable property SexWithPlayer auto
 
 GlobalVariable property SpeechcraftCheckSexSuccess auto
 GlobalVariable property SpeechcraftCheckSexFail auto
-
 GlobalVariable property SpeechcraftCheckMoneySuccess auto
 GlobalVariable property SpeechcraftCheckMoneyFail auto
-
-GlobalVariable property SpeechcraftCheckRapeSuccess auto
-GlobalVariable property SpeechcraftCheckRapeFail auto
 
 float _RandomAppearanceChance
 float property RandomAppearanceChance
@@ -53,7 +51,12 @@ ReferenceAlias property CourierAlias auto
 ReferenceAlias property FollowerAlias auto
 
 GlobalVariable property TemporaryCourierItemCount auto
+
+GlobalVariable property PlayerForce auto
+GlobalVariable property CourierForce auto
+
 MiscObject property Gold auto
+
 Book property DummyItem auto
 
 ; Stages
@@ -74,23 +77,29 @@ float timeElapsed
 
 ; Settings
 string property SettingsFileName = "slnaughtycourier.json" autoReadOnly
+
 string property SettingKeyCommonAnimTagList = "animtags.common" autoReadOnly
 string property SettingKeyOralAnimTagList = "animtags.oral" autoReadOnly
 string property SettingKeyAnalAnimTagList = "animtags.anal" autoReadOnly
 string property SettingKeyVaginalAnimTagList = "animtags.vaginal" autoReadOnly
 string property SettingKeyRapeAnimTagList = "animtags.rape" autoReadOnly
-string property SettingsKeySpeechEnabled = "speechcraft.enabled" autoReadOnly
-string property SettingsKeyHardcoreEnabled = "hardcore.enabled" autoReadOnly
-string property SettingsKeySexPlayer = "sex.player" autoReadOnly
-string property SettingsKeySexFollower = "sex.follower" autoReadOnly
-string property SettingsKeySpeechCheckSexSuccess = "speechcraft.sex.success" autoReadOnly
-string property SettingsKeySpeechCheckSexFail = "speechcraft.sex.fail" autoReadOnly
-string property SettingsKeySpeechCheckMoneySuccess = "speechcraft.money.success" autoReadOnly
-string property SettingsKeySpeechCheckMoneyFail = "speechcraft.money.fail" autoReadOnly
-string property SettingsKeySpeechCheckRapeSuccess = "speechcraft.rape.success" autoReadOnly
-string property SettingsKeySpeechCheckRapeFail = "speechcraft.rape.fail" autoReadOnly
-string property SettingsKeyRandomAppearanceChance = "random_appearance.chance" autoReadOnly
-string property SettingsKeyRandomAppearanceCd = "random_appearance.cooldown" autoReadOnly
+
+string property SettingKeyHardcoreEnabled = "hardcore.enabled" autoReadOnly
+
+string property SettingKeySpeechEnabled = "speechcraft.enabled" autoReadOnly
+string property SettingKeySpeechCheckSexSuccess = "speechcraft.sex.success" autoReadOnly
+string property SettingKeySpeechCheckSexFail = "speechcraft.sex.fail" autoReadOnly
+string property SettingKeySpeechCheckMoneySuccess = "speechcraft.money.success" autoReadOnly
+string property SettingKeySpeechCheckMoneyFail = "speechcraft.money.fail" autoReadOnly
+
+string property SettingKeyForceEnabled = "force.enabled" autoreadonly
+string property SettingKeyCourierForce = "force.courier.force" autoReadOnly
+
+string property SettingKeySexPlayer = "sex.player" autoReadOnly
+string property SettingKeySexFollower = "sex.follower" autoReadOnly
+
+string property SettingKeyRandomAppearanceChance = "random_appearance.chance" autoReadOnly
+string property SettingKeyRandomAppearanceCd = "random_appearance.cooldown" autoReadOnly
 
 
 function SettingsImport()
@@ -104,21 +113,20 @@ function SettingsImport()
   VaginalAnimationTagList.Set(JsonUtil.GetStringValue(SettingsFileName, SettingKeyVaginalAnimTagList))
   RapeAnimationTagList.Set(JsonUtil.GetStringValue(SettingsFileName, SettingKeyRapeAnimTagList))
 
-  SpeechcraftCheckEnabled.SetValue(JsonUtil.GetFloatValue(SettingsFileName, SettingsKeySpeechEnabled))
-  HardcoreEnabled.SetValue(JsonUtil.GetFloatValue(SettingsFileName, SettingsKeyHardcoreEnabled))
+  SpeechcraftCheckEnabled.SetValue(JsonUtil.GetFloatValue(SettingsFileName, SettingKeySpeechEnabled))
+  ForceCheckEnabled.SetValue(JsonUtil.GetFloatValue(SettingsFileName, SettingKeyForceEnabled))
+  HardcoreEnabled.SetValue(JsonUtil.GetFloatValue(SettingsFileName, SettingKeyHardcoreEnabled))
 
-  SexWithFollower.SetValue(JsonUtil.GetFloatValue(SettingsFileName, SettingsKeySexPlayer))
-  SexWithPlayer.SetValue(JsonUtil.GetFloatValue(SettingsFileName, SettingsKeySexFollower))
+  SexWithFollower.SetValue(JsonUtil.GetFloatValue(SettingsFileName, SettingKeySexPlayer))
+  SexWithPlayer.SetValue(JsonUtil.GetFloatValue(SettingsFileName, SettingKeySexFollower))
 
-  SpeechcraftCheckSexSuccess.SetValue(JsonUtil.GetFloatValue(SettingsFileName, SettingsKeySpeechCheckSexSuccess))
-  SpeechcraftCheckSexFail.SetValue(JsonUtil.GetFloatValue(SettingsFileName, SettingsKeySpeechCheckSexFail))
-  SpeechcraftCheckMoneySuccess.SetValue(JsonUtil.GetFloatValue(SettingsFileName, SettingsKeySpeechCheckMoneySuccess))
-  SpeechcraftCheckMoneyFail.SetValue(JsonUtil.GetFloatValue(SettingsFileName, SettingsKeySpeechCheckMoneyFail))
-  SpeechcraftCheckRapeSuccess.SetValue(JsonUtil.GetFloatValue(SettingsFileName, SettingsKeySpeechCheckRapeSuccess))
-  SpeechcraftCheckRapeFail.SetValue(JsonUtil.GetFloatValue(SettingsFileName, SettingsKeySpeechCheckRapeFail))
+  SpeechcraftCheckSexSuccess.SetValue(JsonUtil.GetFloatValue(SettingsFileName, SettingKeySpeechCheckSexSuccess))
+  SpeechcraftCheckSexFail.SetValue(JsonUtil.GetFloatValue(SettingsFileName, SettingKeySpeechCheckSexFail))
+  SpeechcraftCheckMoneySuccess.SetValue(JsonUtil.GetFloatValue(SettingsFileName, SettingKeySpeechCheckMoneySuccess))
+  SpeechcraftCheckMoneyFail.SetValue(JsonUtil.GetFloatValue(SettingsFileName, SettingKeySpeechCheckMoneyFail))
 
-  RandomAppearanceChance = JsonUtil.GetFloatValue(SettingsFileName, SettingsKeyRandomAppearanceChance)
-  RandomAppearanceCooldown = JsonUtil.GetFloatValue(SettingsFileName, SettingsKeyRandomAppearanceCd)
+  RandomAppearanceChance = JsonUtil.GetFloatValue(SettingsFileName, SettingKeyRandomAppearanceChance)
+  RandomAppearanceCooldown = JsonUtil.GetFloatValue(SettingsFileName, SettingKeyRandomAppearanceCd)
 endFunction
 
 function SettingsExport()
@@ -128,21 +136,20 @@ function SettingsExport()
   JsonUtil.SetStringValue(SettingsFileName, SettingKeyVaginalAnimTagList, VaginalAnimationTagList.Get())
   JsonUtil.SetStringValue(SettingsFileName, SettingKeyRapeAnimTagList, RapeAnimationTagList.Get())
 
-  JsonUtil.SetFloatValue(SettingsFileName, SettingsKeySpeechEnabled, SpeechcraftCheckEnabled.GetValue())
-  JsonUtil.SetFloatValue(SettingsFileName, SettingsKeyHardcoreEnabled, HardcoreEnabled.GetValue())
+  JsonUtil.SetFloatValue(SettingsFileName, SettingKeySpeechEnabled, SpeechcraftCheckEnabled.GetValue())
+  JsonUtil.SetFloatValue(SettingsFileName, SettingKeyForceEnabled, ForceCheckEnabled.GetValue())
+  JsonUtil.SetFloatValue(SettingsFileName, SettingKeyHardcoreEnabled, HardcoreEnabled.GetValue())
 
-  JsonUtil.SetFloatValue(SettingsFileName, SettingsKeySexPlayer, SexWithFollower.GetValue())
-  JsonUtil.SetFloatValue(SettingsFileName, SettingsKeySexFollower, SexWithPlayer.GetValue())
+  JsonUtil.SetFloatValue(SettingsFileName, SettingKeySexPlayer, SexWithFollower.GetValue())
+  JsonUtil.SetFloatValue(SettingsFileName, SettingKeySexFollower, SexWithPlayer.GetValue())
 
-  JsonUtil.SetFloatValue(SettingsFileName, SettingsKeySpeechCheckSexSuccess, SpeechcraftCheckSexSuccess.GetValue())
-  JsonUtil.SetFloatValue(SettingsFileName, SettingsKeySpeechCheckSexFail, SpeechcraftCheckSexFail.GetValue())
-  JsonUtil.SetFloatValue(SettingsFileName, SettingsKeySpeechCheckMoneySuccess, SpeechcraftCheckMoneySuccess.GetValue())
-  JsonUtil.SetFloatValue(SettingsFileName, SettingsKeySpeechCheckMoneyFail, SpeechcraftCheckMoneyFail.GetValue())
-  JsonUtil.SetFloatValue(SettingsFileName, SettingsKeySpeechCheckRapeSuccess, SpeechcraftCheckRapeSuccess.GetValue())
-  JsonUtil.SetFloatValue(SettingsFileName, SettingsKeySpeechCheckRapeFail, SpeechcraftCheckRapeFail.GetValue())
+  JsonUtil.SetFloatValue(SettingsFileName, SettingKeySpeechCheckSexSuccess, SpeechcraftCheckSexSuccess.GetValue())
+  JsonUtil.SetFloatValue(SettingsFileName, SettingKeySpeechCheckSexFail, SpeechcraftCheckSexFail.GetValue())
+  JsonUtil.SetFloatValue(SettingsFileName, SettingKeySpeechCheckMoneySuccess, SpeechcraftCheckMoneySuccess.GetValue())
+  JsonUtil.SetFloatValue(SettingsFileName, SettingKeySpeechCheckMoneyFail, SpeechcraftCheckMoneyFail.GetValue())
 
-  JsonUtil.SetFloatValue(SettingsFileName, SettingsKeyRandomAppearanceChance, RandomAppearanceChance)
-  JsonUtil.SetFloatValue(SettingsFileName, SettingsKeyRandomAppearanceCd, RandomAppearanceCooldown)
+  JsonUtil.SetFloatValue(SettingsFileName, SettingKeyRandomAppearanceChance, RandomAppearanceChance)
+  JsonUtil.SetFloatValue(SettingsFileName, SettingKeyRandomAppearanceCd, RandomAppearanceCooldown)
 
   JsonUtil.Save(SettingsFileName)
 endFunction
@@ -207,30 +214,36 @@ endFunction
 
 function ResumeCourierQuest()
   CourierScript.pWICourierItemCount.SetValue(TemporaryCourierItemCount.GetValue())
-  TemporaryCourierItemCount.SetValue(0)
-endFunction
-
-function ResumeCourierQuestOnDialogueGoodbye()
-  Utility.Wait(2)
-
-  while UI.IsMenuOpen("Dialogue Menu") && GetStage() == StageInitial
-    Utility.Wait(1)
-  endWhile
-
-  if GetStage() == StageInitial
-    SetStage(StageResumeCourierQuest)
-  endIf
 endFunction
 
 function WaitForCourierQuest()
   ResumeCourierQuest()
 
-  while CourierScript.pWICourierItemCount.GetValue() as int
+  Debug.Notification("Waiting")
+
+  while (CourierScript.pWICourierItemCount.GetValue() as int) > 0
     Utility.Wait(1)
   endWhile
 
+  Debug.Notification("Restarting")
+
+  TemporaryCourierItemCount.SetValue(0)
   Reset()
   SetStage(StageInitial)
+endFunction
+
+function DeterminePlayerForce()
+  float onehanded = PlayerRef.GetAV("OneHanded")
+  float twohanded = PlayerRef.GetAV("TwoHanded")
+  float archery = PlayerRef.GetAV("Marksman")
+  float conjuration = PlayerRef.GetAV("Conjuration")
+  float destruction = PlayerRef.GetAV("Destruction")
+  float illusion = PlayerRef.GetAV("Illusion")
+
+  float mean = onehanded+twohanded+archery+conjuration+destruction+illusion
+  mean /= 6.0
+
+  PlayerForce.SetValue(mean)
 endFunction
 
 function GiveGold(int sum)

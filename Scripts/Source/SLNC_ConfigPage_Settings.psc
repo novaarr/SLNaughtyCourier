@@ -10,14 +10,16 @@ int oidSexWithFollower
 
 int oidSpeechcraftCheck
 
-int oidSpeechcraftCheckRapeFail
-int oidSpeechcraftCheckRapeSuccess
-
 int oidSpeechcraftCheckMoneyFail
 int oidSpeechcraftCheckMoneySuccess
 
 int oidSpeechcraftCheckSexFail
 int oidSpeechcraftCheckSexSuccess
+
+int oidForceCheck
+int oidPlayerForce
+int oidCourierForce
+
 
 function Display()
   Menu.SetCursorFillMode(Menu.TOP_TO_BOTTOM)
@@ -55,15 +57,28 @@ function Display()
 
   Menu.AddEmptyOption()
 
-  oidSpeechcraftCheckRapeSuccess = Menu.AddSliderOption(                      \
-                            "$SLNC_SETTINGS_SPEECHCRAFT_CHECK_RAPE_SUCCESS",  \
-                            System.SpeechcraftCheckRapeSuccess.GetValue(),    \
-                            "$SLNC_SETTINGS_SPEECHCRAFT_CHECK_FORMAT"         )
+  Menu.AddHeaderOption("$SLNC_SETTINGS_FORCE")
 
-  oidSpeechcraftCheckRapeFail = Menu.AddSliderOption(                         \
-                            "$SLNC_SETTINGS_SPEECHCRAFT_CHECK_RAPE_FAIL",     \
-                            System.SpeechcraftCheckRapeFail.GetValue(),       \
-                            "$SLNC_SETTINGS_SPEECHCRAFT_CHECK_FORMAT"         )
+  Menu.AddEmptyOption()
+
+  oidForceCheck = Menu.AddToggleOption(                                       \
+                            "$SLNC_SETTINGS_FORCE_ENABLED",                   \
+                            System.ForceCheckEnabled.GetValue() as bool       )
+
+  Menu.AddEmptyOption()
+
+  oidPlayerForce = Menu.AddSliderOption(                                      \
+                            "$SLNC_SETTINGS_FORCE_PLAYER",                    \
+                            System.PlayerForce.GetValue(),                    \
+                            "$SLNC_SETTINGS_FORCE_CHECK_FORMAT",              \
+                            Menu.OPTION_FLAG_DISABLED                         )
+
+  Menu.AddEmptyOption()
+
+  oidCourierForce = Menu.AddSliderOption(                                     \
+                            "$SLNC_SETTINGS_FORCE_COURIER",                   \
+                            System.CourierForce.GetValue(),                   \
+                            "$SLNC_SETTINGS_FORCE_CHECK_FORMAT"               )
 
 
   Menu.SetCursorPosition(Menu.TOP_RIGHT)
@@ -102,18 +117,22 @@ function OnHighlight(int option)
   if option == oidHardcoreDialogue
     Menu.SetInfoText("$SLNC_SETTINGS_HARDCORE_DIALOGUE_HINT")
 
-  elseIf  option == oidSpeechcraftCheckRapeSuccess                            \
-  ||      option == oidSpeechcraftCheckMoneySuccess                           \
+  elseIf option == oidCourierForce
+    Menu.SetInfoText("$SLNC_SETTINGS_FORCE_COURIER_HINT")
+
+  elseIf  option == oidSpeechcraftCheckMoneySuccess                           \
   ||      option == oidSpeechcraftCheckSexSuccess
     Menu.SetInfoText("$SLNC_SETTINGS_SPEECHCRAFT_CHECK_SUCCESS_HINT")
 
-  elseIf  option == oidSpeechcraftCheckRapeFail                               \
-  ||      option == oidSpeechcraftCheckMoneyFail                              \
+  elseIf  option == oidSpeechcraftCheckMoneyFail                              \
   ||      option == oidSpeechcraftCheckSexFail
     Menu.SetInfoText("$SLNC_SETTINGS_SPEECHCRAFT_CHECK_FAIL_HINT")
 
   elseIf option == oidRandomAppearanceChance
     Menu.SetInfoText("$SLNC_SETTINGS_RANDAPP_CHANCE_HINT")
+
+  elseIf option == oidForceCheck
+    Menu.SetInfoText("$SLNC_SETTINGS_FORCE_HINT")
 
   endIf
 endFunction
@@ -135,24 +154,20 @@ function OnSelect(int option)
     bool tmp = System.SexWithFollower.GetValue() as bool
     System.SexWithFollower.SetValue((!tmp) as int)
 
+  elseIf option == oidForceCheck
+    bool tmp = System.ForceCheckEnabled.GetValue() as bool
+    System.ForceCheckEnabled.SetValue((!tmp) as int)
+
   endIf
 endFunction
 
 function OnSliderOpen(int option)
-  if option == oidSpeechcraftCheckRapeFail
-    float startValue = System.SpeechcraftCheckRapeFail.GetValue() as float
-    float maxValue = System.SpeechcraftCheckRapeSuccess.GetValue() as float
+  if option == oidCourierForce
+    float startValue = System.CourierForce.GetValue() as float
 
     Menu.SetSliderDialogStartValue(startValue)
     Menu.SetSliderDialogInterval(1.0)
-    Menu.SetSliderDialogRange(0.0, maxValue)
-
-  elseIf option == oidSpeechcraftCheckRapeSuccess
-    float startValue = System.SpeechcraftCheckRapeSuccess.GetValue() as float
-
-    Menu.SetSliderDialogStartValue(startValue)
-    Menu.SetSliderDialogInterval(1.0)
-    Menu.SetSliderDialogRange(0.0, 100.0)
+    Menu.SetSliderDialogRange(0.0, 600.0)
 
   elseIf option == oidSpeechcraftCheckMoneyFail
     float startValue = System.SpeechcraftCheckMoneyFail.GetValue() as float
@@ -198,15 +213,8 @@ function OnSliderOpen(int option)
 endFunction
 
 function OnSliderAccept(int option, float value)
-  if option == oidSpeechcraftCheckRapeFail
-    System.SpeechcraftCheckRapeFail.SetValue(value)
-
-  elseIf option == oidSpeechcraftCheckRapeSuccess
-    System.SpeechcraftCheckRapeSuccess.SetValue(value)
-
-    if value < System.SpeechcraftCheckRapeFail.GetValue()
-      System.SpeechcraftCheckRapeFail.SetValue(value)
-    endIf
+  if option == oidCourierForce
+    System.CourierForce.SetValue(value)
 
   elseIf option == oidSpeechcraftCheckMoneyFail
     System.SpeechcraftCheckMoneyFail.SetValue(value)
