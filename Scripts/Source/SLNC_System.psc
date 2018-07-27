@@ -76,6 +76,10 @@ int property StageInitiateRapeByPlayer = 6 autoReadOnly
 int property StageInitiateRapeByCourier = 7 autoReadOnly
 int property StageResumeCourierQuest = 10 autoReadOnly
 
+; Encounters
+GlobalVariable property TimesMet auto
+GlobalVariable property LastPartingStage auto
+
 ; Random Appearances
 bool property RandomAppearanceCooldownActive auto
 
@@ -248,13 +252,9 @@ endFunction
 function WaitForCourierQuest()
   ResumeCourierQuest()
 
-  Debug.Notification("Waiting")
-
   while (CourierScript.pWICourierItemCount.GetValue() as int) > 0
     Utility.Wait(1)
   endWhile
-
-  Debug.Notification("Restarting")
 
   TemporaryCourierItemCount.SetValue(0)
   Reset()
@@ -279,7 +279,7 @@ function DeterminePlayerForce()
     if arousal <= CoolArousalThreshold
       forcemult = CoolForceMultiplier
 
-    elseIf arousal > NeedyArousalThreshold
+    elseIf arousal > NeedyArousalThreshold || arousal >= 100
       forcemult = NeedyForceMultiplier
 
     endIf

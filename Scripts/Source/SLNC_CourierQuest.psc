@@ -78,22 +78,7 @@ event OnUpdate()
 
   int currentStage = GetStage()
 
-  ;if currentStage == System.StageWaitForCourierQuest
-  ;  Debug.Notification("Waiting for Courier to deliver..")
-
-  ;  if (System.CourierScript.pWICourierItemCount.GetValue() as int) != 0
-  ;    return
-  ;  endif
-
-  ;  UnregisterForUpdate()
-
-  ;  Utility.Wait(20)
-
-  ;  Debug.Notification("Restarting..")
-
-  ;  Reset()
-  ;  SetStage(System.StageInitial)
-  ;endIf
+  System.LastPartingStage.SetValue(currentStage as float)
 
   if currentStage == System.StageInitiateRapeByCourier
     System.StartSex(vaginal = true, anal = true,                              \
@@ -115,7 +100,5 @@ event OnUpdate()
   elseIf currentStage == System.StageInitiateAnySex
     System.StartSex(oral = true, anal = true, vaginal = true)
 
-  endIf
-
-  SetStage(System.StageResumeCourierQuest)
+  endIf  
 endEvent
