@@ -22,6 +22,8 @@ int oidCourierForce
 
 
 function Display()
+  System.DeterminePlayerForce()
+
   Menu.SetCursorFillMode(Menu.TOP_TO_BOTTOM)
   Menu.SetCursorPosition(Menu.TOP_LEFT)
 
