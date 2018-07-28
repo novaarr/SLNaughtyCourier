@@ -70,6 +70,8 @@ event OnUpdate()
 
   System.LastPartingStage.SetValue(currentStage as float)
 
+;  Debug.Notification(currentStage)
+
   if currentStage == System.StageInitiateRapeByCourier
     System.StartSex(Alias_CourierAlias.GetActorReference())
 

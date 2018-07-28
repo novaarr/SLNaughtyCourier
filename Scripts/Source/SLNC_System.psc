@@ -383,6 +383,8 @@ function StartSex(Actor aggressor = None) ; aggressor != None indicates rape
     AnimationTags += "," + AnalAnimationTagList.AssembleTags(RapeSuppressTagList)
   endIf
 
+;  Debug.Notification("Vaginal: " + SexVariantVaginal + ", Anal: " + SexVariantAnal + ", Oral: " + SexVariantOral)
+
   AnimationTags += "," + GetAnimationGenderTags(MainRef, PartnerRef, OtherRef)
 
   if VictimRef
@@ -404,13 +406,11 @@ function StartSex(Actor aggressor = None) ; aggressor != None indicates rape
 
   Debug.Trace("[NC] AnimationTags: " + AnimationTags)
 
-  ; Fire!
-  ; TODO: Suppressing Tags?
-  sslThreadController thread = SexLab.QuickStart( MainRef,                    \
-                                                  PartnerRef,                 \
-                                                  OtherRef,                   \
-                                                  Victim = VictimRef,         \
-                                                  AnimationTags = AnimationTags)
+  Actor[] Positions = SexLabUtil.MakeActorArray(MainRef, PartnerRef, OtherRef)
+  sslBaseAnimation[] Anims = GetSexVariantAnimations(Positions, AnimationTags)
+  int threadId = SexLab.StartSex(Positions, Anims, VictimRef, none, true, "")
+	sslThreadController thread = SexLab.ThreadSlots.GetController(threadId)
+
 
   if thread
     while thread.isLocked
@@ -473,4 +473,43 @@ string function GetAnimationGenderTags(Actor a1, Actor a2, Actor a3=None)
   endIf
 
   return GenderTagLeadingMale + "," + InvertedGenderTag
+endFunction
+
+sslBaseAnimation[] function GetSexVariantAnimations(Actor[] Positions, string AnimationTags)
+  sslBaseAnimation[] TmpAnims = SexLab.AnimSlots.GetByTags(Positions.Length, AnimationTags, "", false)
+  bool[] ValidAnims = Utility.CreateBoolArray(TmpAnims.Length)
+
+  int pos = TmpAnims.Length
+  int ValidAnimCount = 0
+
+  while pos
+    pos -= 1
+
+    if (SexVariantVaginal && TmpAnims[pos].IsVaginal)                         \
+    || (SexVariantOral && TmpAnims[pos].IsOral)                               \
+    || (SexVariantAnal && TmpAnims[pos].IsAnal)
+      ValidAnims[pos] = true
+      ValidAnimCount += 1
+    else
+      ValidAnims[pos] = false
+    endIf
+  endWhile
+
+  sslBaseAnimation[] Anims = sslUtility.AnimationArray(ValidAnimCount)
+
+  if !Anims
+    return None
+  endIf
+
+  pos = ValidAnims.Length
+  while pos
+    pos -= 1
+
+    if ValidAnims[pos]
+      ValidAnimCount -= 1
+      Anims[ValidAnimCount] = TmpAnims[pos]
+    endIf
+  endWhile
+
+  return Anims
 endFunction
