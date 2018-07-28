@@ -5,13 +5,14 @@ Scriptname SLNC_PF_FG Extends Package Hidden
 ;BEGIN FRAGMENT Fragment_0
 Function Fragment_0(Actor akActor)
 ;BEGIN CODE
+
 while System.SexLab.IsActorActive(System.CourierAlias.GetActorReference())
 	Utility.Wait(1)
 endWhile
 
-if System.TemporaryCourierItemCount.GetValue() as int
-	Utility.Wait(2)
-endIf
+while UI.IsMenuOpen("Dialogue Menu")
+	Utility.Wait(1)
+endWhile
 ;END CODE
 EndFunction
 ;END FRAGMENT
