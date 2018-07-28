@@ -7,7 +7,9 @@ Function Fragment_0(ObjectReference akSpeakerRef)
 Actor akSpeaker = akSpeakerRef as Actor
 ;BEGIN CODE
 SLNC_System System = (GetOwningQuest() as Quest) as SLNC_System
-System.SetStage(System.StageInitiateOralSex)
+
+System.ResetSexVariants(oral = true)
+System.SetStage(System.StageInitiateSex)
 ;END CODE
 EndFunction
 ;END FRAGMENT

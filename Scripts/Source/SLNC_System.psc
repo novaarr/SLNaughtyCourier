@@ -66,12 +66,13 @@ MiscObject property Gold auto
 
 Book property DummyItem auto
 
+bool SexVariantAnal
+bool SexVariantOral
+bool SexVariantVaginal
+
 ; Stages
 int property StageInitial = 0 autoReadOnly
-int property StageInitiateAnySex = 2 autoReadOnly
-int property StageInitiateOralSex = 3 autoReadOnly
-int property StageInitiateAnalSex = 4 autoReadOnly
-int property StageInitiateVaginalSex = 5 autoReadOnly
+int property StageInitiateSex = 2 autoReadOnly
 int property StageInitiateRapeByPlayer = 6 autoReadOnly
 int property StageInitiateRapeByCourier = 7 autoReadOnly
 int property StageResumeCourierQuest = 10 autoReadOnly
@@ -284,7 +285,13 @@ function GiveGold(int sum)
   endIf
 endFunction
 
-function StartSex(bool oral = false, bool vaginal = false, bool anal = false, Actor aggressor = None) ; aggressor != None indicates rape
+function ResetSexVariants(bool oral = false, bool vaginal = false, bool anal = false)
+  SexVariantAnal = anal
+  SexVariantOral = oral
+  SexVariantVaginal = vaginal
+endFunction
+
+function StartSex(Actor aggressor = None) ; aggressor != None indicates rape
   if !SexWithPlayer && !SexWithFollower
     Debug.Notification("$SLNC_NO_SEX_TARGET")
 
@@ -364,15 +371,15 @@ function StartSex(bool oral = false, bool vaginal = false, bool anal = false, Ac
     AnimationTags += "," + RapeAnimationTagList.AssembleTags()
   endIf
 
-  if vaginal
+  if SexVariantVaginal
     AnimationTags += "," + VaginalAnimationTagList.AssembleTags(RapeSuppressTagList)
   endIf
 
-  if oral
+  if SexVariantOral
     AnimationTags += "," + OralAnimationTagList.AssembleTags(RapeSuppressTagList)
   endIf
 
-  if anal
+  if SexVariantAnal
     AnimationTags += "," + AnalAnimationTagList.AssembleTags(RapeSuppressTagList)
   endIf
 
@@ -409,10 +416,6 @@ function StartSex(bool oral = false, bool vaginal = false, bool anal = false, Ac
     while thread.isLocked
       Utility.Wait(0.5)
     endWhile
-
-    Game.DisablePlayerControls()
-    PlayerRef.SetLookAt(CourierRef, true)
-    Game.EnablePlayerControls()
   else
     Debug.Notification("$SLNC_SEXLAB_THREAD_FAILURE")
   endIf

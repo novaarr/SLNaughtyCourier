@@ -8,9 +8,13 @@ Actor akSpeaker = akSpeakerRef as Actor
 ;BEGIN CODE
 ; Random Appearance
 SLNC_System System = (GetOwningQuest() as Quest) as SLNC_System
+
 System.TimesMet.Mod(1.0)
+
 System.CourierScript.pCourierContainer.RemoveItem(System.DummyItem)
 System.CourierScript.pWICourierItemCount.Mod(-1.0)
+
+System.ResetSexVariants()
 
 if System.ForceCheckEnabled
   System.DeterminePlayerForce()

@@ -7,18 +7,18 @@ Scriptname SLNC_CourierQuest Extends Quest Hidden
 ReferenceAlias Property Alias_CourierContainerAlias Auto
 ;END ALIAS PROPERTY
 
-;BEGIN ALIAS PROPERTY PlayerAlias
-;ALIAS PROPERTY TYPE ReferenceAlias
-ReferenceAlias Property Alias_PlayerAlias Auto
-;END ALIAS PROPERTY
-
 ;BEGIN ALIAS PROPERTY CourierAlias
 ;ALIAS PROPERTY TYPE ReferenceAlias
 ReferenceAlias Property Alias_CourierAlias Auto
 ;END ALIAS PROPERTY
 
-;BEGIN FRAGMENT Fragment_5
-Function Fragment_5()
+;BEGIN ALIAS PROPERTY PlayerAlias
+;ALIAS PROPERTY TYPE ReferenceAlias
+ReferenceAlias Property Alias_PlayerAlias Auto
+;END ALIAS PROPERTY
+
+;BEGIN FRAGMENT Fragment_6
+Function Fragment_6()
 ;BEGIN CODE
 RegisterForSingleUpdate(2)
 ;END CODE
@@ -41,30 +41,6 @@ RegisterForSingleUpdate(2)
 EndFunction
 ;END FRAGMENT
 
-;BEGIN FRAGMENT Fragment_6
-Function Fragment_6()
-;BEGIN CODE
-RegisterForSingleUpdate(2)
-;END CODE
-EndFunction
-;END FRAGMENT
-
-;BEGIN FRAGMENT Fragment_0
-Function Fragment_0()
-;BEGIN CODE
-RegisterForSingleUpdate(2)
-;END CODE
-EndFunction
-;END FRAGMENT
-
-;BEGIN FRAGMENT Fragment_4
-Function Fragment_4()
-;BEGIN CODE
-RegisterForSingleUpdate(2)
-;END CODE
-EndFunction
-;END FRAGMENT
-
 ;BEGIN FRAGMENT Fragment_7
 Function Fragment_7()
 ;BEGIN AUTOCAST TYPE SLNC_System
@@ -72,7 +48,16 @@ Quest __temp = self as Quest
 SLNC_System kmyQuest = __temp as SLNC_System
 ;END AUTOCAST
 ;BEGIN CODE
+Game.DisablePlayerControls()
+
+kmyQuest.ResetSexVariants()
+kmyQuest.PlayerRef.SetLookAt(kmyQuest.CourierAlias.GetReference(), true)
+
+Utility.Wait(2)
+
 kmyQuest.ResumeCourierQuest()
+
+Game.EnablePlayerControls()
 ;END CODE
 EndFunction
 ;END FRAGMENT
@@ -86,24 +71,13 @@ event OnUpdate()
   System.LastPartingStage.SetValue(currentStage as float)
 
   if currentStage == System.StageInitiateRapeByCourier
-    System.StartSex(vaginal = true, anal = true,                              \
-                    aggressor = Alias_CourierAlias.GetActorReference()        )
+    System.StartSex(Alias_CourierAlias.GetActorReference())
 
   elseIf currentStage == System.StageInitiateRapeByPlayer
-    System.StartSex(vaginal = true, anal = true,                              \
-                    aggressor = Alias_PlayerAlias.GetActorReference()         )
+    System.StartSex(Alias_PlayerAlias.GetActorReference())
 
-  elseIf currentStage == System.StageInitiateVaginalSex
-    System.StartSex(vaginal = true)
-
-  elseIf currentStage == System.StageInitiateAnalSex
-    System.StartSex(anal = true)
-
-  elseIf currentStage == System.StageInitiateOralSex
-    System.StartSex(oral = true)
-
-  elseIf currentStage == System.StageInitiateAnySex
-    System.StartSex(oral = true, anal = true, vaginal = true)
+  elseIf currentStage == System.StageInitiateSex
+    System.StartSex()
 
   endIf
 endEvent

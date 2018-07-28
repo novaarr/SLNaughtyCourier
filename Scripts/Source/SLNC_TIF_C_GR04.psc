@@ -8,7 +8,9 @@ Actor akSpeaker = akSpeakerRef as Actor
 ;BEGIN CODE
 ; Parting Stage: 1-5
 SLNC_System System = (GetOwningQuest() as Quest) as SLNC_System
+
 System.LastPartingStage.SetValue(System.GetStage() as float)
+
 System.SetStage(System.StageResumeCourierQuest)
 ;END CODE
 EndFunction
