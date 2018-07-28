@@ -2,9 +2,9 @@
 ;NEXT FRAGMENT INDEX 8
 Scriptname SLNC_CourierQuest Extends Quest Hidden
 
-;BEGIN ALIAS PROPERTY CourierAlias
+;BEGIN ALIAS PROPERTY CourierContainerAlias
 ;ALIAS PROPERTY TYPE ReferenceAlias
-ReferenceAlias Property Alias_CourierAlias Auto
+ReferenceAlias Property Alias_CourierContainerAlias Auto
 ;END ALIAS PROPERTY
 
 ;BEGIN ALIAS PROPERTY PlayerAlias
@@ -12,8 +12,29 @@ ReferenceAlias Property Alias_CourierAlias Auto
 ReferenceAlias Property Alias_PlayerAlias Auto
 ;END ALIAS PROPERTY
 
+;BEGIN ALIAS PROPERTY CourierAlias
+;ALIAS PROPERTY TYPE ReferenceAlias
+ReferenceAlias Property Alias_CourierAlias Auto
+;END ALIAS PROPERTY
+
+;BEGIN FRAGMENT Fragment_5
+Function Fragment_5()
+;BEGIN CODE
+RegisterForSingleUpdate(2)
+;END CODE
+EndFunction
+;END FRAGMENT
+
 ;BEGIN FRAGMENT Fragment_3
 Function Fragment_3()
+;BEGIN CODE
+RegisterForSingleUpdate(2)
+;END CODE
+EndFunction
+;END FRAGMENT
+
+;BEGIN FRAGMENT Fragment_2
+Function Fragment_2()
 ;BEGIN CODE
 RegisterForSingleUpdate(2)
 ;END CODE
@@ -28,24 +49,8 @@ RegisterForSingleUpdate(2)
 EndFunction
 ;END FRAGMENT
 
-;BEGIN FRAGMENT Fragment_5
-Function Fragment_5()
-;BEGIN CODE
-RegisterForSingleUpdate(2)
-;END CODE
-EndFunction
-;END FRAGMENT
-
 ;BEGIN FRAGMENT Fragment_0
 Function Fragment_0()
-;BEGIN CODE
-RegisterForSingleUpdate(2)
-;END CODE
-EndFunction
-;END FRAGMENT
-
-;BEGIN FRAGMENT Fragment_2
-Function Fragment_2()
 ;BEGIN CODE
 RegisterForSingleUpdate(2)
 ;END CODE
@@ -67,7 +72,7 @@ Quest __temp = self as Quest
 SLNC_System kmyQuest = __temp as SLNC_System
 ;END AUTOCAST
 ;BEGIN CODE
-kmyQuest.WaitForCourierQuest()
+kmyQuest.ResumeCourierQuest()
 ;END CODE
 EndFunction
 ;END FRAGMENT
@@ -100,5 +105,5 @@ event OnUpdate()
   elseIf currentStage == System.StageInitiateAnySex
     System.StartSex(oral = true, anal = true, vaginal = true)
 
-  endIf  
+  endIf
 endEvent

@@ -249,18 +249,6 @@ function ResumeCourierQuest()
   CourierScript.pWICourierItemCount.SetValue(TemporaryCourierItemCount.GetValue())
 endFunction
 
-function WaitForCourierQuest()
-  ResumeCourierQuest()
-
-  while (CourierScript.pWICourierItemCount.GetValue() as int) > 0
-    Utility.Wait(1)
-  endWhile
-
-  TemporaryCourierItemCount.SetValue(0)
-  Reset()
-  SetStage(StageInitial)
-endFunction
-
 function DeterminePlayerForce()
   float onehanded = PlayerRef.GetAV("OneHanded")
   float twohanded = PlayerRef.GetAV("TwoHanded")
