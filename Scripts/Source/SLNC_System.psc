@@ -427,28 +427,28 @@ function StartSex(Actor aggressor = None) ; aggressor != None indicates rape
     AnimationTags += "," + AnalAnimationTagList.AssembleTags(RapeSuppressTagList)
   endIf
 
-  Debug.Notification("Vaginal: " + SexVariantVaginal + ", Anal: " + SexVariantAnal + ", Oral: " + SexVariantOral)
+  ;Debug.Notification("Vaginal: " + SexVariantVaginal + ", Anal: " + SexVariantAnal + ", Oral: " + SexVariantOral)
 
   AnimationTags += "," + GetAnimationGenderTags(MainRef, PartnerRef, OtherRef)
 
-  if VictimRef
-    Debug.Trace("[NC] Victim:        " + VictimRef.GetDisplayName())
-  endIf
+;  if VictimRef
+;    Debug.Trace("[NC] Victim:        " + VictimRef.GetDisplayName())
+;  endIf
 
-  if aggressor
-    Debug.Trace("[NC] Aggressor:     " + aggressor.GetDisplayName())
-  endIf
+;  if aggressor
+;    Debug.Trace("[NC] Aggressor:     " + aggressor.GetDisplayName())
+;  endIf
 
-  Debug.Trace("[NC] --")
+;  Debug.Trace("[NC] --")
 
-  Debug.Trace("[NC] Main:          " + MainRef.GetDisplayName())
-  Debug.Trace("[NC] Partner:       " + PartnerRef.GetDisplayName())
+;  Debug.Trace("[NC] Main:          " + MainRef.GetDisplayName())
+;  Debug.Trace("[NC] Partner:       " + PartnerRef.GetDisplayName())
 
-  if OtherRef
-    Debug.Trace("[NC] Other:         " + OtherRef.GetDisplayName())
-  endIf
+;  if OtherRef
+;    Debug.Trace("[NC] Other:         " + OtherRef.GetDisplayName())
+;  endIf
 
-  Debug.Trace("[NC] AnimationTags: " + AnimationTags)
+;  Debug.Trace("[NC] AnimationTags: " + AnimationTags)
 
   Actor[] Positions = SexLabUtil.MakeActorArray(MainRef, PartnerRef, OtherRef)
   sslBaseAnimation[] Anims = GetSexVariantAnimations(Positions, AnimationTags)
