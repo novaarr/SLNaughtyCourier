@@ -20,7 +20,7 @@ ReferenceAlias Property Alias_PlayerAlias Auto
 ;BEGIN FRAGMENT Fragment_6
 Function Fragment_6()
 ;BEGIN CODE
-RegisterForSingleUpdate(2)
+RegisterForSingleUpdate(0.1)
 ;END CODE
 EndFunction
 ;END FRAGMENT
@@ -28,7 +28,7 @@ EndFunction
 ;BEGIN FRAGMENT Fragment_3
 Function Fragment_3()
 ;BEGIN CODE
-RegisterForSingleUpdate(2)
+RegisterForSingleUpdate(0.1)
 ;END CODE
 EndFunction
 ;END FRAGMENT
@@ -36,7 +36,7 @@ EndFunction
 ;BEGIN FRAGMENT Fragment_2
 Function Fragment_2()
 ;BEGIN CODE
-RegisterForSingleUpdate(2)
+RegisterForSingleUpdate(0.1)
 ;END CODE
 EndFunction
 ;END FRAGMENT
@@ -48,16 +48,11 @@ Quest __temp = self as Quest
 SLNC_System kmyQuest = __temp as SLNC_System
 ;END AUTOCAST
 ;BEGIN CODE
-Game.DisablePlayerControls()
-
 kmyQuest.ResetSexVariants()
-kmyQuest.PlayerRef.SetLookAt(kmyQuest.CourierAlias.GetReference(), true)
 
 Utility.Wait(2)
 
 kmyQuest.ResumeCourierQuest()
-
-Game.EnablePlayerControls()
 ;END CODE
 EndFunction
 ;END FRAGMENT
@@ -70,7 +65,9 @@ event OnUpdate()
 
   System.LastPartingStage.SetValue(currentStage as float)
 
-;  Debug.Notification(currentStage)
+  if UI.IsMenuOpen("Dialogue Menu")
+    Utility.Wait(1)
+  endIf
 
   if currentStage == System.StageInitiateRapeByCourier
     System.StartSex(Alias_CourierAlias.GetActorReference())
