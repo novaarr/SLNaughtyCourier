@@ -3,7 +3,7 @@ scriptname SLNC_AnimTagList extends Quest hidden
 string[] property TagList auto
 bool[] property TagStateList auto
 
-string function AssembleTags(SLNC_AnimTagList suppress = None)
+string function AssembleTags(bool with_enabled = true, bool with_disabled = false, SLNC_AnimTagList suppress = None)
   if !TagList
     return ""
   endIf
@@ -14,7 +14,8 @@ string function AssembleTags(SLNC_AnimTagList suppress = None)
   while pos
     pos -= 1
 
-    if TagList[pos] && TagStateList[pos]
+    if TagList[pos] && TagStateList[pos] && with_enabled                      \
+    || TagList[pos] && !TagStateList[pos] && with_disabled
       int suppressTagFound = -1
 
       if suppress
@@ -35,6 +36,10 @@ string function AssembleTags(SLNC_AnimTagList suppress = None)
   endWhile
 
   return tags
+endFunction
+
+string function AssembleDisabledTags()
+  return AssembleTags(false, true)
 endFunction
 
 function Set(string tags)
