@@ -397,6 +397,9 @@ function StartSex(Actor aggressor = None) ; aggressor != None indicates rape
     SuppressionTags += "," + AnalAnimationTagList.AssembleDisabledTags()
   endIf
 
+  if RapeSuppressTagList
+    SuppressionTags += "," + RapeSuppressTagList.AssembleDisabledTags()
+  endIf
 
   string GenderTag = GetAnimationGenderTag(PlayerRefTmp, FollowerRef, CourierRef)
 
