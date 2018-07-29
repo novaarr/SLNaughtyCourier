@@ -1,1 +1,1 @@
-scriptname SLNC_RapeAnimTagList extends SLNC_AnimTagList hidden
+scriptname SLNC_PlayerRapeAnimTagList extends SLNC_AnimTagList hidden

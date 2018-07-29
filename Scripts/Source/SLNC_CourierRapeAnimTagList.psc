@@ -1,0 +1,1 @@
+scriptname SLNC_CourierRapeAnimTagList extends SLNC_AnimTagList hidden

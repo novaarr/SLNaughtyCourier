@@ -1,4 +1,4 @@
-scriptname SLNC_ConfigGroup_PlayerRapeAnimTagList extends SLNC_ConfigGroup_AnimTagList hidden
+scriptname SLNC_ConfigGroup_CourrRapeAnimTagList extends SLNC_ConfigGroup_AnimTagList hidden
 
 int oidSuppress
 
@@ -31,5 +31,5 @@ endFunction
 
 ; SLNC_ConfigGroup_AnimTagList
 SLNC_AnimTagList function GetTagList()
-  return Menu.System.PlayerRapeAnimationTagList
+  return Menu.System.CourierRapeAnimationTagList
 endFunction

@@ -7,7 +7,9 @@ SLNC_OralAnimTagList property OralAnimationTagList auto
 SLNC_AnalAnimTagList property AnalAnimationTagList auto
 SLNC_VaginalAnimTagList property VaginalAnimationTagList auto
 
-SLNC_RapeAnimTagList property RapeAnimationTagList auto
+SLNC_PlayerRapeAnimTagList property PlayerRapeAnimationTagList auto
+SLNC_CourierRapeAnimTagList property CourierRapeAnimationTagList auto
+
 bool property DeactivatedRapeSuppressCommon auto
 
 GlobalVariable property SpeechcraftCheckEnabled auto
@@ -89,12 +91,14 @@ float timeElapsed
 
 ; Settings
 string property SettingsFileName = "slnaughtycourier.json" autoReadOnly
+string property SettingsCommonTagListFileName = "slnaughtycourier-tl-common.json" autoReadOnly
+string property SettingsOralTagListFileName = "slnaughtycourier-tl-oral.json" autoReadOnly
+string property SettingsAnalTagListFileName = "slnaughtycourier-tl-anal.json" autoReadOnly
+string property SettingsVaginalTagListFileName = "slnaughtycourier-tl-vaginal.json" autoReadOnly
+string property SettingsCourierRapeTagListFileName = "slnaughtycourier-tl-courier-rape.json" autoReadOnly
+string property SettingsPlayerRapeTagListFileName = "slnaughtycourier-tl-player-rape.json" autoReadOnly
 
-string property SettingKeyCommonAnimTagList = "animtags.common" autoReadOnly
-string property SettingKeyOralAnimTagList = "animtags.oral" autoReadOnly
-string property SettingKeyAnalAnimTagList = "animtags.anal" autoReadOnly
-string property SettingKeyVaginalAnimTagList = "animtags.vaginal" autoReadOnly
-string property SettingKeyRapeAnimTagList = "animtags.rape" autoReadOnly
+string property SettingKeyAnimTagList = "animtags" autoReadOnly
 
 string property SettingKeyHardcoreEnabled = "hardcore.enabled" autoReadOnly
 
@@ -121,15 +125,33 @@ string property SettingKeyRandomAppearanceCd = "random_appearance.cooldown" auto
 
 
 function SettingsImport()
+  if JsonUtil.Load(SettingsCommonTagListFileName)
+    CommonAnimationTagList.Set(JsonUtil.GetStringValue(SettingsCommonTagListFileName, SettingKeyAnimTagList))
+  endIf
+
+  if JsonUtil.Load(SettingsOralTagListFileName)
+    OralAnimationTagList.Set(JsonUtil.GetStringValue(SettingsOralTagListFileName, SettingKeyAnimTagList))
+  endIf
+
+  if JsonUtil.Load(SettingsAnalTagListFileName)
+    AnalAnimationTagList.Set(JsonUtil.GetStringValue(SettingsAnalTagListFileName, SettingKeyAnimTagList))
+  endIf
+
+  if JsonUtil.Load(SettingsVaginalTagListFileName)
+    VaginalAnimationTagList.Set(JsonUtil.GetStringValue(SettingsVaginalTagListFileName, SettingKeyAnimTagList))
+  endIf
+
+  if JsonUtil.Load(SettingsPlayerRapeTagListFileName)
+    PlayerRapeAnimationTagList.Set(JsonUtil.GetStringValue(SettingsPlayerRapeTagListFileName, SettingKeyAnimTagList))
+  endIf
+
+  if JsonUtil.Load(SettingsCourierRapeTagListFileName)
+    CourierRapeAnimationTagList.Set(JsonUtil.GetStringValue(SettingsCourierRapeTagListFileName, SettingKeyAnimTagList))
+  endIf
+
   if !JsonUtil.Load(SettingsFileName)
     return
   endIf
-
-  CommonAnimationTagList.Set(JsonUtil.GetStringValue(SettingsFileName, SettingKeyCommonAnimTagList))
-  OralAnimationTagList.Set(JsonUtil.GetStringValue(SettingsFileName, SettingKeyOralAnimTagList))
-  AnalAnimationTagList.Set(JsonUtil.GetStringValue(SettingsFileName, SettingKeyAnalAnimTagList))
-  VaginalAnimationTagList.Set(JsonUtil.GetStringValue(SettingsFileName, SettingKeyVaginalAnimTagList))
-  RapeAnimationTagList.Set(JsonUtil.GetStringValue(SettingsFileName, SettingKeyRapeAnimTagList))
 
   HardcoreEnabled.SetValue(JsonUtil.GetFloatValue(SettingsFileName, SettingKeyHardcoreEnabled))
 
@@ -156,11 +178,23 @@ function SettingsImport()
 endFunction
 
 function SettingsExport()
-  JsonUtil.SetStringValue(SettingsFileName, SettingKeyCommonAnimTagList, CommonAnimationTagList.Get())
-  JsonUtil.SetStringValue(SettingsFileName, SettingKeyOralAnimTagList, OralAnimationTagList.Get())
-  JsonUtil.SetStringValue(SettingsFileName, SettingKeyAnalAnimTagList, AnalAnimationTagList.Get())
-  JsonUtil.SetStringValue(SettingsFileName, SettingKeyVaginalAnimTagList, VaginalAnimationTagList.Get())
-  JsonUtil.SetStringValue(SettingsFileName, SettingKeyRapeAnimTagList, RapeAnimationTagList.Get())
+  JsonUtil.SetStringValue(SettingsCommonTagListFileName, SettingKeyAnimTagList, CommonAnimationTagList.Get())
+  JsonUtil.Save(SettingsCommonTagListFileName)
+
+  JsonUtil.SetStringValue(SettingsOralTagListFileName, SettingKeyAnimTagList, OralAnimationTagList.Get())
+  JsonUtil.Save(SettingsOralTagListFileName)
+
+  JsonUtil.SetStringValue(SettingsAnalTagListFileName, SettingKeyAnimTagList, AnalAnimationTagList.Get())
+  JsonUtil.Save(SettingsAnalTagListFileName)
+
+  JsonUtil.SetStringValue(SettingsVaginalTagListFileName, SettingKeyAnimTagList, VaginalAnimationTagList.Get())
+  JsonUtil.Save(SettingsVaginalTagListFileName)
+
+  JsonUtil.SetStringValue(SettingsPlayerRapeTagListFileName, SettingKeyAnimTagList, PlayerRapeAnimationTagList.Get())
+  JsonUtil.Save(SettingsPlayerRapeTagListFileName)
+
+  JsonUtil.SetStringValue(SettingsCourierRapeTagListFileName, SettingKeyAnimTagList, CourierRapeAnimationTagList.Get())
+  JsonUtil.Save(SettingsCourierRapeTagListFileName)
 
   JsonUtil.SetFloatValue(SettingsFileName, SettingKeyHardcoreEnabled, HardcoreEnabled.GetValue())
 
@@ -361,14 +395,18 @@ function StartSex(Actor aggressor = None) ; aggressor != None indicates rape
   ; Determine tags
   SLNC_AnimTagList RapeSuppressTagList = None
 
-  if DeactivatedRapeSuppressCommon && VictimRef
-    RapeSuppressTagList = RapeAnimationTagList
+  if DeactivatedRapeSuppressCommon
+    if VictimRef == PlayerRef
+      RapeSuppressTagList = PlayerRapeAnimationTagList
+    elseIf VictimRef == CourierRef
+      RapeSuppressTagList = CourierRapeAnimationTagList
+    endIf
   endIf
 
   string AnimationTags = CommonAnimationTagList.AssembleTags(RapeSuppressTagList)
 
   if VictimRef
-    AnimationTags += "," + RapeAnimationTagList.AssembleTags()
+    AnimationTags += "," + RapeSuppressTagList.AssembleTags()
   endIf
 
   if SexVariantVaginal
@@ -383,7 +421,7 @@ function StartSex(Actor aggressor = None) ; aggressor != None indicates rape
     AnimationTags += "," + AnalAnimationTagList.AssembleTags(RapeSuppressTagList)
   endIf
 
-;  Debug.Notification("Vaginal: " + SexVariantVaginal + ", Anal: " + SexVariantAnal + ", Oral: " + SexVariantOral)
+  Debug.Notification("Vaginal: " + SexVariantVaginal + ", Anal: " + SexVariantAnal + ", Oral: " + SexVariantOral)
 
   AnimationTags += "," + GetAnimationGenderTags(MainRef, PartnerRef, OtherRef)
 
@@ -410,7 +448,6 @@ function StartSex(Actor aggressor = None) ; aggressor != None indicates rape
   sslBaseAnimation[] Anims = GetSexVariantAnimations(Positions, AnimationTags)
   int threadId = SexLab.StartSex(Positions, Anims, VictimRef, none, true, "")
 	sslThreadController thread = SexLab.ThreadSlots.GetController(threadId)
-
 
   if thread
     while thread.isLocked
