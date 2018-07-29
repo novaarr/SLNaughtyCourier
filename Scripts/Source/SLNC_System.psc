@@ -10,8 +10,7 @@ SLNC_VaginalAnimTagList property VaginalAnimationTagList auto
 SLNC_PlayerRapeAnimTagList property PlayerRapeAnimationTagList auto
 SLNC_CourierRapeAnimTagList property CourierRapeAnimationTagList auto
 
-bool property DeactivatedRapeSuppressCommon auto
-bool property CourierRapePartnerReceiving auto
+bool property DeactivatedRapeTagsSuppressOtherTags auto
 
 GlobalVariable property SpeechcraftCheckEnabled auto
 GlobalVariable property ForceCheckEnabled auto
@@ -340,10 +339,6 @@ function StartSex(Actor aggressor = None) ; aggressor != None indicates rape
 
   Actor VictimRef = None
 
-  Actor MainRef = None
-  Actor PartnerRef = None
-  Actor OtherRef = None
-
   if SexWithPlayer.GetValue() == 0.0
     PlayerRefTmp = None
   endIf
@@ -352,56 +347,25 @@ function StartSex(Actor aggressor = None) ; aggressor != None indicates rape
     FollowerRef = None
   endIf
 
-  ; Determine actors
+  ; Determine victim
   ; - Aggressor: Courier
   if aggressor == CourierRef
     if !PlayerRefTmp
-      MainRef = FollowerRef
       VictimRef = FollowerRef
-
-      PartnerRef = CourierRef
     else
-      MainRef = PlayerRef
       VictimRef = PlayerRef
-
-      PartnerRef = CourierRef
-      OtherRef = FollowerRef
     endIf
 
   ; - Aggressor: Player
   elseIf aggressor == PlayerRef
-    MainRef = CourierRef
     VictimRef = CourierRef
 
-    ; ..but Player not in scene
-    if !PlayerRefTmp
-      PartnerRef = FollowerRef
-    else
-      PartnerRef = PlayerRef
-      OtherRef = FollowerRef
-    endIf
-
-    if CourierRapePartnerReceiving
-      MainRef = PartnerRef
-      PartnerRef = CourierRef
-    endIf
-
-  ; - No Aggressor
-  else
-    if !PlayerRefTmp
-      MainRef = FollowerRef
-      PartnerRef = CourierRef
-    else
-      MainRef = PlayerRef
-      PartnerRef = CourierRef
-      OtherRef = FollowerRef
-    endIf
   endIf
 
   ; Determine tags
   SLNC_AnimTagList RapeSuppressTagList = None
 
-  if DeactivatedRapeSuppressCommon
+  if DeactivatedRapeTagsSuppressOtherTags
     if VictimRef == PlayerRef
       RapeSuppressTagList = PlayerRapeAnimationTagList
     elseIf VictimRef == CourierRef
@@ -410,49 +374,39 @@ function StartSex(Actor aggressor = None) ; aggressor != None indicates rape
   endIf
 
   string AnimationTags = CommonAnimationTagList.AssembleTags(RapeSuppressTagList)
+  string SuppressionTags = CommonAnimationTagList.AssembleDisabledTags()
 
-  if VictimRef
-    AnimationTags += "," + RapeSuppressTagList.AssembleTags()
+  if VictimRef == PlayerRef
+    AnimationTags += "," + PlayerRapeAnimationTagList.AssembleTags()
+  elseIf VictimRef == CourierRef
+    AnimationTags += "," + CourierRapeAnimationTagList.AssembleTags()
   endIf
 
   if SexVariantVaginal
     AnimationTags += "," + VaginalAnimationTagList.AssembleTags(RapeSuppressTagList)
+    SuppressionTags += "," + VaginalAnimationTagList.AssembleDisabledTags()
   endIf
 
   if SexVariantOral
     AnimationTags += "," + OralAnimationTagList.AssembleTags(RapeSuppressTagList)
+    SuppressionTags += "," + OralAnimationTagList.AssembleDisabledTags()
   endIf
 
   if SexVariantAnal
     AnimationTags += "," + AnalAnimationTagList.AssembleTags(RapeSuppressTagList)
+    SuppressionTags += "," + AnalAnimationTagList.AssembleDisabledTags()
   endIf
 
-  ;Debug.Notification("Vaginal: " + SexVariantVaginal + ", Anal: " + SexVariantAnal + ", Oral: " + SexVariantOral)
 
-  string GenderTag = GetAnimationGenderTag(MainRef, PartnerRef, OtherRef)
+  string GenderTag = GetAnimationGenderTag(PlayerRefTmp, FollowerRef, CourierRef)
 
-;  if VictimRef
-;    Debug.Trace("[NC] Victim:        " + VictimRef.GetDisplayName())
-;  endIf
+  Actor[] Positions = SexLabUtil.MakeActorArray(PlayerRefTmp, FollowerRef, CourierRef)
+  sslBaseAnimation[] Anims = GetSexVariantAnimations(Positions, AnimationTags, SuppressionTags, GenderTag)
 
-;  if aggressor
-;    Debug.Trace("[NC] Aggressor:     " + aggressor.GetDisplayName())
-;  endIf
+  Positions = SexLab.SortActors(Positions)
 
-;  Debug.Trace("[NC] --")
-
-;  Debug.Trace("[NC] Main:          " + MainRef.GetDisplayName())
-;  Debug.Trace("[NC] Partner:       " + PartnerRef.GetDisplayName())
-
-;  if OtherRef
-;    Debug.Trace("[NC] Other:         " + OtherRef.GetDisplayName())
-;  endIf
-
-;  Debug.Trace("[NC] AnimationTags: " + AnimationTags)
-
-  Actor[] Positions = SexLabUtil.MakeActorArray(MainRef, PartnerRef, OtherRef)
-  sslBaseAnimation[] Anims = GetSexVariantAnimations(Positions, AnimationTags, GenderTag)
   int threadId = SexLab.StartSex(Positions, Anims, VictimRef, none, true, "")
+
 	sslThreadController thread = SexLab.ThreadSlots.GetController(threadId)
 
   if thread
@@ -465,7 +419,7 @@ function StartSex(Actor aggressor = None) ; aggressor != None indicates rape
 endFunction
 
 ; Utility
-string function GetAnimationGenderTag(Actor a1, Actor a2, Actor a3=None)
+string function GetAnimationGenderTag(Actor a1, Actor a2=None, Actor a3=None)
   int FemaleCount = 0
   int MaleCount = 0
   int ActorCount = 0
@@ -507,8 +461,8 @@ string function GetAnimationGenderTag(Actor a1, Actor a2, Actor a3=None)
   return GenderTagLeadingMale
 endFunction
 
-sslBaseAnimation[] function GetSexVariantAnimations(Actor[] Positions, string AnimationTags, string GenderTag = "")
-  sslBaseAnimation[] TmpAnims = SexLab.AnimSlots.GetByTags(Positions.Length, AnimationTags, "", false)
+sslBaseAnimation[] function GetSexVariantAnimations(Actor[] Positions, string AnimationTags, string SuppressionTags, string GenderTag = "")
+  sslBaseAnimation[] TmpAnims = SexLab.AnimSlots.GetByTags(Positions.Length, AnimationTags, SuppressionTags, false)
   bool[] ValidAnims = Utility.CreateBoolArray(TmpAnims.Length)
 
   int pos = TmpAnims.Length
