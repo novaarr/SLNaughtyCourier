@@ -5,8 +5,6 @@ int oidRandomAppearanceCooldown
 
 int oidHardcoreDialogue
 
-int oidCourierRapePartnerReceiving
-
 int oidSexWithPlayer
 int oidSexWithFollower
 
@@ -89,11 +87,6 @@ function Display()
                             "$SLNC_SETTINGS_HARDCORE_DIALOGUE",               \
                             System.HardcoreEnabled.GetValue() as bool         )
 
-  oidCourierRapePartnerReceiving = Menu.AddToggleOption(                      \
-                            "$SLNC_SETTINGS_COURIER_RAPE_PARTNER_RECEIVING",  \
-                            System.CourierRapePartnerReceiving                )
-
-
   Menu.AddEmptyOption()
   Menu.AddHeaderOption("$SLNC_SETTINGS_SEX_PARTNERS")
 
@@ -174,9 +167,6 @@ function OnHighlight(int option)
   elseIf option == oidArousalInfluence
     Menu.SetInfoText("$SLNC_SETTINGS_AROUSAL_HINT")
 
-  elseIf option == oidCourierRapePartnerReceiving
-    Menu.SetInfoText("$SLNC_SETTINGS_COURIER_RAPE_PARTNER_RECEIVING_HINT")
-
   endIf
 endFunction
 
@@ -188,9 +178,6 @@ function OnSelect(int option)
   elseIf option == oidHardcoreDialogue
     bool tmp = System.HardcoreEnabled.GetValue() as bool
     System.HardcoreEnabled.SetValue((!tmp) as int)
-
-  elseIf option == oidCourierRapePartnerReceiving
-    System.CourierRapePartnerReceiving = !System.CourierRapePartnerReceiving
 
   elseIf option == oidSexWithPlayer
     bool tmp = System.SexWithPlayer.GetValue() as bool
