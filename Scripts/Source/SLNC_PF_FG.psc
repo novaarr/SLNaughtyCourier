@@ -9,10 +9,6 @@ Function Fragment_0(Actor akActor)
 while System.SexLab.IsActorActive(System.CourierAlias.GetActorReference())
 	Utility.Wait(1)
 endWhile
-
-while UI.IsMenuOpen("Dialogue Menu")
-	Utility.Wait(1)
-endWhile
 ;END CODE
 EndFunction
 ;END FRAGMENT
