@@ -5,7 +5,7 @@ int oidSuppress
 ; SLNC_ConfigGroupBase
 function DisplayExpanded()
   oidSuppress = Menu.AddToggleOption("$SLNC_ANIMATIONTAGS_RAPE_SUPPRESS",     \
-                                      Menu.System.DeactivatedRapeSuppressCommon)
+                          Menu.System.DeactivatedRapeTagsSuppressOtherTags    )
 
   Menu.AddEmptyOption()
 
@@ -14,8 +14,8 @@ endFunction
 
 function OnSelect(int option)
   if oidSuppress == option
-    Menu.System.DeactivatedRapeSuppressCommon =                               \
-                                    !Menu.System.DeactivatedRapeSuppressCommon
+    Menu.System.DeactivatedRapeTagsSuppressOtherTags =                        \
+                          !Menu.System.DeactivatedRapeTagsSuppressOtherTags
   else
     parent.OnSelect(option)
   endIf
