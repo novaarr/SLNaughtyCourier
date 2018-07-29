@@ -10,11 +10,10 @@ int property TOP_LEFT = 0 autoReadOnly
 int property TOP_RIGHT = 1 autoReadOnly
 
 int function GetVersion()
-  return 3
+  return 4
 endFunction
 
 event OnVersionUpdate(int version)
-  Debug.Notification("OnVersionUpdate("+version+"). Current: " + CurrentVersion)
 endEvent
 
 event OnPageReset(string page)
