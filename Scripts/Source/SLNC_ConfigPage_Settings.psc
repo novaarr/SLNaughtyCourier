@@ -5,6 +5,8 @@ int oidRandomAppearanceCooldown
 
 int oidHardcoreDialogue
 
+int oidCourierRapePartnerReceiving
+
 int oidSexWithPlayer
 int oidSexWithFollower
 
@@ -87,6 +89,10 @@ function Display()
                             "$SLNC_SETTINGS_HARDCORE_DIALOGUE",               \
                             System.HardcoreEnabled.GetValue() as bool         )
 
+  oidCourierRapePartnerReceiving = Menu.AddToggleOption(                      \
+                            "$SLNC_SETTINGS_COURIER_RAPE_PARTNER_RECEIVING",  \
+                            System.CourierRapePartnerReceiving                )
+
 
   Menu.AddEmptyOption()
   Menu.AddHeaderOption("$SLNC_SETTINGS_SEX_PARTNERS")
@@ -104,7 +110,7 @@ function Display()
 
   oidRandomAppearanceChance = Menu.AddSliderOption(                           \
                             "$SLNC_SETTINGS_RANDAPP_CHANCE",                  \
-                            System.RandomAppearanceChance,                    \
+                            System.RandomAppearanceChance * 100.0,            \
                             "$SLNC_SETTINGS_RANDAPP_CHANCE_FORMAT"            )
 
   oidRandomAppearanceCooldown = Menu.AddSliderOption(                         \
@@ -168,6 +174,9 @@ function OnHighlight(int option)
   elseIf option == oidArousalInfluence
     Menu.SetInfoText("$SLNC_SETTINGS_AROUSAL_HINT")
 
+  elseIf option == oidCourierRapePartnerReceiving
+    Menu.SetInfoText("$SLNC_SETTINGS_COURIER_RAPE_PARTNER_RECEIVING_HINT")
+
   endIf
 endFunction
 
@@ -179,6 +188,9 @@ function OnSelect(int option)
   elseIf option == oidHardcoreDialogue
     bool tmp = System.HardcoreEnabled.GetValue() as bool
     System.HardcoreEnabled.SetValue((!tmp) as int)
+
+  elseIf option == oidCourierRapePartnerReceiving
+    System.CourierRapePartnerReceiving = !System.CourierRapePartnerReceiving
 
   elseIf option == oidSexWithPlayer
     bool tmp = System.SexWithPlayer.GetValue() as bool
@@ -257,9 +269,9 @@ function OnSliderOpen(int option)
     Menu.SetSliderDialogRange(0.3, 1.0)
 
   elseIf option == oidRandomAppearanceChance
-    Menu.SetSliderDialogStartValue(System.RandomAppearanceChance)
-    Menu.SetSliderDialogInterval(0.001)
-    Menu.SetSliderDialogRange(0.0, 1.0)
+    Menu.SetSliderDialogStartValue(System.RandomAppearanceChance * 100.0)
+    Menu.SetSliderDialogInterval(1.0)
+    Menu.SetSliderDialogRange(0.0, 100.0)
 
   elseIf option == oidRandomAppearanceCooldown
     Menu.SetSliderDialogStartValue(System.RandomAppearanceCooldown)
@@ -294,6 +306,10 @@ function OnSliderAccept(int option, float value)
     endIf
 
   elseIf option == oidRandomAppearanceChance
+    if value != 0
+      value /= 100.0
+    endIf
+
     System.RandomAppearanceChance = value
 
   elseIf option == oidRandomAppearanceCooldown
