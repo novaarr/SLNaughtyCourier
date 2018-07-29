@@ -11,6 +11,7 @@ SLNC_PlayerRapeAnimTagList property PlayerRapeAnimationTagList auto
 SLNC_CourierRapeAnimTagList property CourierRapeAnimationTagList auto
 
 bool property DeactivatedRapeSuppressCommon auto
+bool property CourierRapePartnerReceiving auto
 
 GlobalVariable property SpeechcraftCheckEnabled auto
 GlobalVariable property ForceCheckEnabled auto
@@ -378,6 +379,11 @@ function StartSex(Actor aggressor = None) ; aggressor != None indicates rape
     else
       PartnerRef = PlayerRef
       OtherRef = FollowerRef
+    endIf
+
+    if CourierRapePartnerReceiving
+      MainRef = PartnerRef
+      PartnerRef = CourierRef
     endIf
 
   ; - No Aggressor
