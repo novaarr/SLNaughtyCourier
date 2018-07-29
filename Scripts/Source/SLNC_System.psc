@@ -429,7 +429,7 @@ function StartSex(Actor aggressor = None) ; aggressor != None indicates rape
 
   ;Debug.Notification("Vaginal: " + SexVariantVaginal + ", Anal: " + SexVariantAnal + ", Oral: " + SexVariantOral)
 
-  AnimationTags += "," + GetAnimationGenderTags(MainRef, PartnerRef, OtherRef)
+  string GenderTag = GetAnimationGenderTag(MainRef, PartnerRef, OtherRef)
 
 ;  if VictimRef
 ;    Debug.Trace("[NC] Victim:        " + VictimRef.GetDisplayName())
@@ -451,7 +451,7 @@ function StartSex(Actor aggressor = None) ; aggressor != None indicates rape
 ;  Debug.Trace("[NC] AnimationTags: " + AnimationTags)
 
   Actor[] Positions = SexLabUtil.MakeActorArray(MainRef, PartnerRef, OtherRef)
-  sslBaseAnimation[] Anims = GetSexVariantAnimations(Positions, AnimationTags)
+  sslBaseAnimation[] Anims = GetSexVariantAnimations(Positions, AnimationTags, GenderTag)
   int threadId = SexLab.StartSex(Positions, Anims, VictimRef, none, true, "")
 	sslThreadController thread = SexLab.ThreadSlots.GetController(threadId)
 
@@ -465,7 +465,7 @@ function StartSex(Actor aggressor = None) ; aggressor != None indicates rape
 endFunction
 
 ; Utility
-string function GetAnimationGenderTags(Actor a1, Actor a2, Actor a3=None)
+string function GetAnimationGenderTag(Actor a1, Actor a2, Actor a3=None)
   int FemaleCount = 0
   int MaleCount = 0
   int ActorCount = 0
@@ -491,7 +491,6 @@ string function GetAnimationGenderTags(Actor a1, Actor a2, Actor a3=None)
   endWhile
 
   string GenderTagLeadingMale = ""
-  string InvertedGenderTag = ""
 
   while MaleCount
     MaleCount -= 1
@@ -505,20 +504,10 @@ string function GetAnimationGenderTags(Actor a1, Actor a2, Actor a3=None)
     GenderTagLeadingMale += "F"
   endWhile
 
-  while ActorCount
-    ActorCount -= 1
-
-    InvertedGenderTag += StringUtil.GetNthChar(GenderTagLeadingMale, ActorCount)
-  endWhile
-
-  if GenderTagLeadingMale == InvertedGenderTag
-    return GenderTagLeadingMale
-  endIf
-
-  return GenderTagLeadingMale + "," + InvertedGenderTag
+  return GenderTagLeadingMale
 endFunction
 
-sslBaseAnimation[] function GetSexVariantAnimations(Actor[] Positions, string AnimationTags)
+sslBaseAnimation[] function GetSexVariantAnimations(Actor[] Positions, string AnimationTags, string GenderTag = "")
   sslBaseAnimation[] TmpAnims = SexLab.AnimSlots.GetByTags(Positions.Length, AnimationTags, "", false)
   bool[] ValidAnims = Utility.CreateBoolArray(TmpAnims.Length)
 
@@ -528,13 +517,18 @@ sslBaseAnimation[] function GetSexVariantAnimations(Actor[] Positions, string An
   while pos
     pos -= 1
 
-    if (SexVariantVaginal && TmpAnims[pos].IsVaginal)                         \
+    if ((SexVariantVaginal && TmpAnims[pos].IsVaginal)                        \
     || (SexVariantOral && TmpAnims[pos].IsOral)                               \
-    || (SexVariantAnal && TmpAnims[pos].IsAnal)
+    || (SexVariantAnal && TmpAnims[pos].IsAnal))                              \
+    && GenderTag == TmpAnims[pos].GetGenderTag(Reverse = true)
+
       ValidAnims[pos] = true
       ValidAnimCount += 1
+
     else
+
       ValidAnims[pos] = false
+
     endIf
   endWhile
 
