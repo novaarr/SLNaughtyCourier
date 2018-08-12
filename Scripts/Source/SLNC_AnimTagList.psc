@@ -14,8 +14,8 @@ string function AssembleTags(bool with_enabled = true, bool with_disabled = fals
   while pos
     pos -= 1
 
-    if TagList[pos] && TagStateList[pos] && with_enabled                      \
-    || TagList[pos] && !TagStateList[pos] && with_disabled
+    if (TagList[pos] && TagStateList[pos] && with_enabled)                    \
+    || (TagList[pos] && !TagStateList[pos] && with_disabled)
       int suppressTagFound = -1
 
       if suppress
@@ -184,6 +184,14 @@ int function GetTagCount()
   endIf
 
   return 0
+endFunction
+
+bool function HasEnabledTags()
+  if TagStateList.Find(true) < 0
+    return false
+  endIf
+
+  return true
 endFunction
 
 function Sort()
