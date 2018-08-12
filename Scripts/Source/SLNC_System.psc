@@ -326,8 +326,8 @@ function ResetSexVariants(bool oral = false, bool vaginal = false, bool anal = f
 endFunction
 
 function StartSex(Actor aggressor = None) ; aggressor != None indicates rape
-  if !SexWithPlayer && !SexWithFollower
-    Debug.Notification("$SLNC_NO_SEX_TARGET")
+  if !SexWithPlayer.GetValue() && !SexWithFollower.GetValue()
+    Debug.Notification("$SLNC_NO_SEX_TARGET_SET")
 
     Reset()
     return
@@ -339,12 +339,22 @@ function StartSex(Actor aggressor = None) ; aggressor != None indicates rape
 
   Actor VictimRef = None
 
-  if SexWithPlayer.GetValue() == 0.0
+  if !SexWithPlayer.GetValue()                                                \
+  || PlayerRef.IsDead()
     PlayerRefTmp = None
   endIf
 
-  if SexWithFollower.GetValue() == 0.0
+  if !SexWithFollower.GetValue()                                              \
+  || !FollowerRef                                                             \
+  || FollowerRef.IsDead()                                                     \
+  || FollowerRef.Is3DLoaded()                                                 \
+  || FollowerRef.IsDisabled()
     FollowerRef = None
+  endIf
+
+  if !PlayerRefTmp && !FollowerRef
+    Reset()
+    return
   endIf
 
   ; Determine victim
@@ -382,18 +392,18 @@ function StartSex(Actor aggressor = None) ; aggressor != None indicates rape
     AnimationTags += "," + CourierRapeAnimationTagList.AssembleTags()
   endIf
 
-  if SexVariantVaginal
-    AnimationTags += "," + VaginalAnimationTagList.AssembleTags(RapeSuppressTagList)
+  if SexVariantVaginal && VaginalAnimationTagList.HasEnabledTags()
+    AnimationTags += "," + VaginalAnimationTagList.AssembleTags(suppress=RapeSuppressTagList)
     SuppressionTags += "," + VaginalAnimationTagList.AssembleDisabledTags()
   endIf
 
-  if SexVariantOral
-    AnimationTags += "," + OralAnimationTagList.AssembleTags(RapeSuppressTagList)
+  if SexVariantOral && OralAnimationTagList.HasEnabledTags()
+    AnimationTags += "," + OralAnimationTagList.AssembleTags(suppress=RapeSuppressTagList)
     SuppressionTags += "," + OralAnimationTagList.AssembleDisabledTags()
   endIf
 
-  if SexVariantAnal
-    AnimationTags += "," + AnalAnimationTagList.AssembleTags(RapeSuppressTagList)
+  if SexVariantAnal && AnalAnimationTagList.HasEnabledTags()
+    AnimationTags += "," + AnalAnimationTagList.AssembleTags(suppress=RapeSuppressTagList)
     SuppressionTags += "," + AnalAnimationTagList.AssembleDisabledTags()
   endIf
 
@@ -402,6 +412,11 @@ function StartSex(Actor aggressor = None) ; aggressor != None indicates rape
   endIf
 
   string GenderTag = GetAnimationGenderTag(PlayerRefTmp, FollowerRef, CourierRef)
+
+  Debug.Trace("[SLNC] SexVariants: anal="+SexVariantAnal+", oral="+SexVariantOral+", vaginal="+SexVariantVaginal)
+  Debug.Trace("[SLNC] GenderTags: " + GenderTag)
+  Debug.Trace("[SLNC] AnimTags: " + AnimationTags)
+  Debug.Trace("[SLNC] SupprAnimTags: " + SuppressionTags)
 
   Actor[] Positions = SexLabUtil.MakeActorArray(PlayerRefTmp, FollowerRef, CourierRef)
   sslBaseAnimation[] Anims = GetSexVariantAnimations(Positions, AnimationTags, SuppressionTags, GenderTag)
